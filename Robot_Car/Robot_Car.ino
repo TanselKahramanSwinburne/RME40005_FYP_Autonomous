@@ -22,7 +22,7 @@ const int ServoStraight = 100;
 //Movement Specifications
 const int MaximumDistance = 200;
 const int MinimumDistance = 20;
-const int TurnTime = 500;
+const int TurnTime = 10;
 bool MovingForward = false;
 int Distance = 100;
 
@@ -59,7 +59,7 @@ void loop() {
   int distanceRight = 0;
   int distanceLeft = 0;
 
-  if(Distance <= MinimumDistance){
+  /*if(Distance <= MinimumDistance){
     moveStop();    
     delay(500);
 
@@ -81,6 +81,8 @@ void loop() {
   }
 
   //Check Distance
-  Distance = readPing();
+  Distance = readPing();*/
+  turnLeft();
+  delay(5000);
   
 }
