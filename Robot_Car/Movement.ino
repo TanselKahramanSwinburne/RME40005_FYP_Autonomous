@@ -1,5 +1,3 @@
-#include "RobotCarMovement.h"
-
 //Movement code - build into own library?
 void moveForward(){
   //if(!MovingForward) {
@@ -26,4 +24,28 @@ void moveBackward(){
 
     digitalWrite(LeftMotorBackward, HIGH);
     digitalWrite(RightMotorBackward, HIGH);
+}
+
+void turnRight(){
+  digitalWrite(LeftMotorForward, HIGH);
+  digitalWrite(RightMotorBackward, HIGH);
+
+  digitalWrite(LeftMotorBackward, LOW);
+  digitalWrite(RightMotorForward, LOW);
+
+  delay(TurnTime);
+
+  moveStop();
+}
+
+void turnLeft(){
+  digitalWrite(LeftMotorBackward, HIGH);
+  digitalWrite(RightMotorForward, HIGH);
+
+  digitalWrite(LeftMotorForward, LOW);
+  digitalWrite(RightMotorBackward, LOW);
+
+  delay(TurnTime);
+
+  moveStop();
 }
