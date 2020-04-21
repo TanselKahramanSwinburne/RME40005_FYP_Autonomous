@@ -26,6 +26,7 @@ const int TurnTime = 500;
 bool MovingForward = false;
 int Distance = 100;
 
+//Class Declarations
 NewPing sonar(TRIG_PIN, ECHO_PIN, MaximumDistance); //Ultrasonic Sensor Class Creation - Note: Can potentially use the same pins for trigger and echo if running short on pins, consult NewPing.h
 Servo servo_motor; //Servo Class
 
@@ -38,10 +39,9 @@ void setup() {
 
   //Servo Setup
   servo_motor.attach(ServoPin);
-
   servo_motor.write(ServoStraight); //Initialise servo to point straight ahead
   
-  delay(2000);
+  delay(1000);
 
   //Ultrasonic Initial Readings
   Distance = readPing();
@@ -58,12 +58,10 @@ void loop() {
 
   int distanceRight = 0;
   int distanceLeft = 0;
-  
-  delay(50); //tuning - can we get rid of it?
 
   if(Distance <= MinimumDistance){
     moveStop();    
-    delay(400);
+    delay(500);
 
     //Check either direction
     distanceRight = lookRight();
@@ -86,37 +84,3 @@ void loop() {
   Distance = readPing();
   
 }
-
-//Servo Movement Code - can all be built to own library?
-int lookRight(){
-  int distance = 0;
-  servo_motor.write(ServoRight); 
-  delay(500);
-  distance = readPing();
-  delay(100);
-  servo_motor.write(ServoStraight);
-  return distance;
-}
-
-int lookLeft(){
-  int distance = 0;
-  servo_motor.write(ServoLeft);
-  delay(500);
-  distance = readPing();
-  delay(100);
-  servo_motor.write(ServoStraight);
-  return distance;
-}
-
-//Ultrasonic Code - can be put in own library?
-int readPing(){
-  int cm = 0;
-  delay(70); //If this delay is here, can get rid of all delays before and after calls to function?
-  cm = sonar.ping_cm();
-  if(cm==0) {
-    cm = 250; //what?
-  }
-  return cm;
-}
-
-//Movement code - build into own library?
