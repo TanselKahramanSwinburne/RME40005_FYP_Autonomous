@@ -41,26 +41,18 @@ void setup() {
   //Servo Setup
   servo_motor.attach(ServoPin);
   servo_motor.write(ServoStraight); //Initialise servo to point straight ahead
-  
-  delay(1000);
-
-  //Ultrasonic Initial Readings
-  Distance = readPing();
-  delay(100);
-  Distance = readPing();
-  delay(100);
-  Distance = readPing();
-  delay(100);
-  Distance = readPing();
-  delay(100);
 }
 
 void loop() {
 
   int distanceRight = 0;
   int distanceLeft = 0;
-
-  /*if(Distance <= MinimumDistance){
+ 
+  /*
+    //Check Distance
+    Distance = readPing();
+   
+    if(Distance <= MinimumDistance){
     moveStop();    
     delay(500);
 
@@ -81,8 +73,7 @@ void loop() {
     moveForward();
   }
 
-  //Check Distance
-  Distance = readPing();*/
+  */
   turnLeft();
   delay(5000);
   
