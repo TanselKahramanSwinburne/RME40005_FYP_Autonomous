@@ -1,5 +1,6 @@
-#include "Servo.h"
+#include <Servo.h>
 #include "NewPing.h"
+
 
 //Setup Motor Control Pins
 const int LeftMotorForward = 5;
@@ -22,7 +23,7 @@ const int ServoStraight = 100;
 //Movement Specifications
 const int MaximumDistance = 200;
 const int MinimumDistance = 20;
-const int TurnTime = 300; //Min required 10ms
+const int TurnTime = 300; //Min required 10ms, 300 is roughly 90 degrees - roughly. it changes how far it goes each time.
 bool MovingForward = false;
 int Distance = 100;
 
