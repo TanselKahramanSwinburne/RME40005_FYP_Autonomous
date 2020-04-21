@@ -1,22 +1,11 @@
-/*
-===============================================================================================================
-QMC5883LCompass.h Library XYZ Example Sketch
-Learn more at [https://github.com/mprograms/QMC5883Compas]
 
-This example shows how to use smoothing to get more stable readings.
-
-===============================================================================================================
-Release under the GNU General Public License v3
-[https://www.gnu.org/licenses/gpl-3.0.en.html]
-===============================================================================================================
-*/
-#include <QMC5883LCompass.h>
-
-#define ARRAY_SIZE 10
+#include "QMC5883LCompass.h"
 
 QMC5883LCompass compass;
-int averagingXArray[ARRAY_SIZE] = {0,0,0,0,0,0,0,0,0,0};
-int averagingLoop = 0;
+const int ArraySize = 25;
+int AveragingXArray[ArraySize];
+int AveragingYArray[ArraySize];
+int AveragingLoop = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -36,47 +25,57 @@ void setup() {
 }
 
 void loop() {
-  int x, xAve, xAveBuff;
+  int x, xAve;
+  int y, yAve;
+  long xAveBuff, yAveBuff;
   
   // Read compass values
   compass.read();
 
+  byte a = compass.getAzimuth();
+
+  char myArray[3];
+  compass.getDirection(myArray, a);
+
   // Return XYZ readings
   x = compass.getX();
+  y = compass.getY();
 
-  averagingXArray[averagingLoop] = x;
-  averagingLoop++;
-  if (averagingLoop >= ARRAY_SIZE + 1) {
-    averagingLoop = 0;
+  AveragingXArray[AveragingLoop] = x;
+  AveragingYArray[AveragingLoop] = y;
+  AveragingLoop++;
+  if (AveragingLoop >= ArraySize) {
+    AveragingLoop = 0;
   }
-  
+
+ 
   xAveBuff = 0;
-  for (int i = 0; i <= ARRAY_SIZE; i++) {
-    xAveBuff = xAveBuff + averagingXArray[i];
+  for (int i = 0; i < ArraySize; i++) {
+    xAveBuff += AveragingXArray[i];
   }
+  xAve = xAveBuff / ArraySize / 10;
   
-  xAve = 0;
-  xAve = xAveBuff / (ARRAY_SIZE + 1);
+  yAveBuff = 0;
+  for (int j = 0; j < ArraySize; j++) {
+    yAveBuff += AveragingYArray[j];
+  }
+  yAve = yAveBuff / ArraySize / 10;
 
 
-  
-  
-  Serial.print("L: ");
-  Serial.print(averagingLoop);
-  Serial.print(" X: ");
+  Serial.print("xRaw: ");
   Serial.print(x);
-  Serial.println();
-
-  Serial.print("X ARRAY = [ ");
-  for (int i = 0; i <= ARRAY_SIZE; i++) {
-    Serial.print(averagingXArray[i]);
-    Serial.print(" ");
-  }
-  Serial.print("]");
-  Serial.println();
-
-  Serial.print("Xave: ");
+  Serial.print(" xAve: ");
   Serial.print(xAve);
+
+  Serial.print(" yRaw: ");
+  Serial.print(y);
+  Serial.print(" yAve: ");
+  Serial.print(yAve);
+
+  Serial.println();
+  Serial.print(myArray[0]);
+  Serial.print(myArray[1]);
+  Serial.print(myArray[2]);
   Serial.println();
   Serial.println();
   
