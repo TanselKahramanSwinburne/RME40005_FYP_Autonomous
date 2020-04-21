@@ -1,3 +1,13 @@
+// Compass Module Code
+// Author: Tansel A Kahraman
+// Last Modified: 21/04/2020
+// Description:
+/*  Reads in value from a HMC5883L Compass.
+ *  Convert the readings from the x and y axis into degree bearings to be used with an autonomous robot.
+ *  The values read are already smoothed out, but then further averaged by the last 25 values for a smoother reading.
+ */
+
+#include <math.h>
 #include "QMC5883LCompass.h"
 
 QMC5883LCompass compass;
@@ -16,7 +26,7 @@ void setup() {
    *   STEPS     = int   The number of steps to smooth the results by. Valid 1 to 10.
    *                     Higher steps equals more smoothing but longer process time.
    *                     
-   *   ADVANCED  = bool  Turn advanced smmothing on or off. True will remove the max and min values from each step and then process as normal.
+   *   ADVANCED  = bool  Turn advanced smoothing on or off. True will remove the max and min values from each step and then process as normal.
    *                     Turning this feature on will results in even more smoothing but will take longer to process.
    *                     
    */
@@ -26,55 +36,54 @@ void setup() {
 void loop() {
   int x, xAve;
   int y, yAve;
+  int dirAngle;
   long xAveBuff, yAveBuff;
   
-  // Read compass values
+  // Read compass values.
   compass.read();
 
-  byte a = compass.getAzimuth();
-
-  char myArray[3];
-  compass.getDirection(myArray, a);
-
-  // Return XYZ readings
+  // Return XY readings.
   x = compass.getX();
   y = compass.getY();
 
+  // Store XY readings into averaging array.
   AveragingXArray[AveragingLoop] = x;
   AveragingYArray[AveragingLoop] = y;
   AveragingLoop++;
-  if (AveragingLoop >= ArraySize) {
-    AveragingLoop = 0;
-  }
+  if (AveragingLoop >= ArraySize) AveragingLoop = 0;
 
- 
+  // Calculate the average x value. 
   xAveBuff = 0;
   for (int i = 0; i < ArraySize; i++) {
     xAveBuff += AveragingXArray[i];
   }
-  xAve = xAveBuff / ArraySize / 10;
-  
+  xAve = xAveBuff / ArraySize;
+
+  // Calculate the average y value.
   yAveBuff = 0;
   for (int j = 0; j < ArraySize; j++) {
     yAveBuff += AveragingYArray[j];
   }
-  yAve = yAveBuff / ArraySize / 10;
+  yAve = yAveBuff / ArraySize;
+
+  // Calculate the direction in degrees.
+  dirAngle = atan2(xAve, yAve)/0.0174532925;
+  if (dirAngle < 0) dirAngle+=360;
+  if (dirAngle >= 360) dirAngle-=360;
 
 
   Serial.print("xRaw: ");
   Serial.print(x);
   Serial.print(" xAve: ");
   Serial.print(xAve);
-
+  Serial.print(" | ");
   Serial.print(" yRaw: ");
   Serial.print(y);
   Serial.print(" yAve: ");
   Serial.print(yAve);
-
   Serial.println();
-  Serial.print(myArray[0]);
-  Serial.print(myArray[1]);
-  Serial.print(myArray[2]);
+  Serial.print("Angle: ");
+  Serial.print(dirAngle);
   Serial.println();
   Serial.println();
   
