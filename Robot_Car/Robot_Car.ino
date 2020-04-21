@@ -22,7 +22,7 @@ const int ServoStraight = 100;
 //Movement Specifications
 const int MaximumDistance = 200;
 const int MinimumDistance = 20;
-const int TurnTime = 10;
+const int TurnTime = 300; //Min required 10ms
 bool MovingForward = false;
 int Distance = 100;
 

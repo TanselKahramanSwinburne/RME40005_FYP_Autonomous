@@ -1,4 +1,3 @@
-
 #include "QMC5883LCompass.h"
 
 QMC5883LCompass compass;
