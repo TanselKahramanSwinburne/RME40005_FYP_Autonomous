@@ -1,6 +1,6 @@
 // Compass Module Code
 // Author: Tansel A Kahraman
-// Last Modified: 21/04/2020
+// Last Modified: 22/04/2020
 // Description:
 /*  Reads in value from a HMC5883L Compass.
  *  Convert the readings from the x and y axis into degree bearings to be used with an autonomous robot.
@@ -10,13 +10,15 @@
 #include <math.h>
 #include "QMC5883LCompass.h"
 
+// Constants and variables used by the compass module.
 QMC5883LCompass compass;
 const int ArraySize = 25;
 int AveragingXArray[ArraySize];
 int AveragingYArray[ArraySize];
 int AveragingLoop = 0;
 
-void setup() {
+// Procedure for setting up the compass module for communication.
+void setupCompass() {
   Serial.begin(9600);
   compass.init();
 
@@ -33,12 +35,14 @@ void setup() {
   compass.setSmoothing(10,true);  
 }
 
-void loop() {
+
+// Procedure for reading, averaging and converting values from the compass to degrees.
+void readCompass() {
   int x, xAve;
   int y, yAve;
   int dirAngle;
   long xAveBuff, yAveBuff;
-  
+
   // Read compass values.
   compass.read();
 
@@ -71,21 +75,17 @@ void loop() {
   if (dirAngle < 0) dirAngle+=360;
   if (dirAngle >= 360) dirAngle-=360;
 
-
-  Serial.print("xRaw: ");
-  Serial.print(x);
-  Serial.print(" xAve: ");
-  Serial.print(xAve);
-  Serial.print(" | ");
-  Serial.print(" yRaw: ");
-  Serial.print(y);
-  Serial.print(" yAve: ");
-  Serial.print(yAve);
-  Serial.println();
   Serial.print("Angle: ");
   Serial.print(dirAngle);
   Serial.println();
-  Serial.println();
-  
+}
+
+
+void setup() {
+  setupCompass();
+}
+
+void loop() {
+  readCompass(); 
   delay(50);
 }
