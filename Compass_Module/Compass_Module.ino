@@ -37,7 +37,7 @@ void setupCompass() {
 
 
 // Procedure for reading, averaging and converting values from the compass to degrees.
-void readCompass() {
+int readCompass() {
   int x, xAve;
   int y, yAve;
   int dirAngle;
@@ -75,9 +75,7 @@ void readCompass() {
   if (dirAngle < 0) dirAngle+=360;
   if (dirAngle >= 360) dirAngle-=360;
 
-  Serial.print("Angle: ");
-  Serial.print(dirAngle);
-  Serial.println();
+  return dirAngle;
 }
 
 
@@ -86,6 +84,10 @@ void setup() {
 }
 
 void loop() {
-  readCompass(); 
+  int degreesRead = 0;
+  degreesRead = readCompass();
+  Serial.print(degreesRead);
+  Serial.println();
+  
   delay(50);
 }
