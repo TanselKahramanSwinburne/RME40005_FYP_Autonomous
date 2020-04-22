@@ -1,7 +1,13 @@
-//Ultrasonic Code Read Distance
+// Ultrasonic Sensor Code
+// Author: Ryan Pritchard
+// Last Modified: 22/04/2020
+// Description:
+/* Calls functions from the NewPing library to read distances from the ultrasonic sensor
+ * In it's own file to make potential changes/increases to the code easier later on.
+ */
+
 int readPing(){
   int cm = 0;
-  delay(70); //If this delay is here, can get rid of all delays before and after calls to function? need tuning
   cm = sonar.ping_cm();
   
   return cm;

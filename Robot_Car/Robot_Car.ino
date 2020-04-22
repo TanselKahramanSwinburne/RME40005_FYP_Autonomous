@@ -1,3 +1,15 @@
+// Robot Car Main Code
+// Author: Ryan Pritchard
+//         Tansel Kahraman
+// Last Modified: 22/04/2020
+// Description:
+/* Main setup and control code for robot car.
+ * Sets up controller pin designation, global variables, ultrasonic sensor and servo motor
+ * contains high level control code for the robot
+ * Note: Other .ino files, Movement, Servo_Control adn Ultrasonic are all merged into this file at compile time, they are added in alphabetical order.
+ *       Be careful with order of declared functions to ensure that the using function is declared in a file that is merged after the function it is using.
+ */
+ 
 #include <Servo.h>
 #include "NewPing.h"
 
@@ -47,7 +59,8 @@ void loop() {
 
   int distanceRight = 0;
   int distanceLeft = 0;
- 
+
+  //can get rid of this later, left here to have something to play with if we wanted to test hardware for now
   /*
     //Check Distance
     Distance = readPing();

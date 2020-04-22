@@ -1,14 +1,10 @@
-//Movement code - build into own library?
-void moveForward(){
-  //if(!MovingForward) {
-    //MovingForward = true; //No point in having this at this time?
-    digitalWrite(LeftMotorForward, HIGH);
-    digitalWrite(RightMotorForward, HIGH);
-
-    digitalWrite(LeftMotorBackward, LOW);
-    digitalWrite(RightMotorBackward, LOW);
-  //}
-}
+// Movement Control Code
+// Author: Ryan Pritchard
+// Last Modified: 22/04/2020
+// Description:
+/* Sets pin values to for basic movement commands.
+ * Based on the direction of travel required, sets pins high and low to control robot motors.
+ */
 
 void moveStop(){
   digitalWrite(LeftMotorForward, LOW);
@@ -16,9 +12,16 @@ void moveStop(){
   digitalWrite(RightMotorForward, LOW);
   digitalWrite(RightMotorBackward, LOW);
 }
+ 
+void moveForward(){
+    digitalWrite(LeftMotorForward, HIGH);
+    digitalWrite(RightMotorForward, HIGH);
+
+    digitalWrite(LeftMotorBackward, LOW);
+    digitalWrite(RightMotorBackward, LOW);
+}
 
 void moveBackward(){
-    //MovingForward = false;
     digitalWrite(LeftMotorForward, LOW);
     digitalWrite(RightMotorForward, LOW);
 
