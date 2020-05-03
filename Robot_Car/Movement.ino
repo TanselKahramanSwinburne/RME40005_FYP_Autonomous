@@ -48,7 +48,7 @@ void turnLeft(){
   digitalWrite(LeftMotorForward, LOW);
   digitalWrite(RightMotorBackward, LOW);
 
-  delay(TurnTime);
+  //delay(TurnTime);
 
-  moveStop();
+  //moveStop();
 }
