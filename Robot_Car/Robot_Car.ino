@@ -11,6 +11,9 @@
  * Note: Pins 10 and 9 do not seem to work as PWM pins on this arduino UNO
  */
  //Temp Note: turn time delay and movestop are commented out in the turn left function at the minute during testing of the compass and PWM
+ //           Likely remove the delays inside the turn functions so that turning can be controlled by the compass (PID?)
+ //           Thinking not to worry about accurate turning too much just yet, likely will be able to use the wheelchair in semester 2 so focus on path planning
+ 
  
 #include <Servo.h> //required for servo
 #include<math.h> //required for compass
@@ -145,15 +148,9 @@ void loop() {
   else {
     moveStop();
   }
-  //  Serial.print(initial);
-  //  Serial.println();
-     //add in braking to movestop?
-    //include a bump command to bump left 2 or 3 degrees, closest seems to get is about 4° before the target, bump 4 degrees or use one left one right to move the extra 4?
+  
+    
     //PWM Test going straight
-    //analogWrite(PIN, DUTY CYCLE) - writes a PWM signal to the specified pin, at a duty cycle of 0-255 for 0-100%
-    //100 and below the motors do not turn
-    
-    
     //Right motor stronger than left by about 10
     //90 is about the lowest speed we can go, 90 on left, 80 on right, might be different for one forwards one backwards
     

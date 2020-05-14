@@ -6,6 +6,8 @@
    Based on the direction of travel required, sets pins high and low to control robot motors.
    Speed is set by passing in a value to write to the PWM pins for the motor controller.
    have preset speeds of Fast, Med and Slow and Off for the moment at 255, 180, 100 out of a max of 255.
+   Commands: Stop Motors, Brake going forwards, backwards, left and right, turn hard left and right, turn softly left and right,
+   move forwards and backwards, bump left and right.
 */
 
 void moveStop() { //add in braking?
@@ -19,9 +21,54 @@ void moveStop() { //add in braking?
   digitalWrite(RightMotorBackward, LOW);
 }
 
-void brake(int pace){
+void brakeForward(int pace){
+  analogWrite(LeftMotorPWM, pace);
+  analogWrite(RightMotorPWM, pace);
+
+  digitalWrite(LeftMotorForward, LOW);
+  digitalWrite(RightMotorForward, LOW);
+
+  digitalWrite(LeftMotorBackward, HIGH);
+  digitalWrite(RightMotorBackward, HIGH);
+  
+  delay(BrakeTime);
+
+  //moveStop();
+}
+
+void brakeBackward(int pace){
+  analogWrite(LeftMotorPWM, pace);
+  analogWrite(RightMotorPWM, pace);
+
+  digitalWrite(LeftMotorForward, HIGH);
+  digitalWrite(RightMotorForward, HIGH);
+
+  digitalWrite(LeftMotorBackward, LOW);
+  digitalWrite(RightMotorBackward, LOW);
+  
+  delay(BrakeTime);
+
+  //moveStop();
+}
+
+void brakeLeft(int pace){
   analogWrite(LeftMotorPWM, Off);
   analogWrite(RightMotorPWM, pace);
+
+  digitalWrite(LeftMotorForward, LOW);
+  digitalWrite(RightMotorForward, LOW);
+
+  digitalWrite(LeftMotorBackward, HIGH);
+  digitalWrite(RightMotorBackward, HIGH);
+  
+  delay(BrakeTime);
+
+  //moveStop();
+}
+
+void brakeRight(int pace){
+  analogWrite(LeftMotorPWM, pace);
+  analogWrite(RightMotorPWM, Off);
 
   digitalWrite(LeftMotorForward, LOW);
   digitalWrite(RightMotorForward, LOW);
