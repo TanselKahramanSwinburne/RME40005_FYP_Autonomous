@@ -103,33 +103,6 @@ void loop() {
   Serial.print(degreesRead);
   Serial.println();
 
-  //can get rid of this later, left here to have something to play with if we wanted to test hardware for now
-  /*
-    //Check Distance
-    Distance = readPing();
-   
-    if(Distance <= MinimumDistance){
-    moveStop();    
-    delay(500);
-
-    //Check either direction
-    distanceRight = lookRight();
-    distanceLeft = lookLeft();
-
-    //Check if distanceLeft is closer than current Distance
-    if (distanceRight >= distanceLeft){
-      turnRight();
-    }
-    else {
-      turnLeft();
-    }
-  }
-  //Not close to anything, move forwards
-  else {
-    moveForward();
-  }
-
-  */
   //turn until bearing
   int bearing = 250;
  
@@ -154,19 +127,7 @@ void loop() {
     //Right motor stronger than left by about 10
     //90 is about the lowest speed we can go, 90 on left, 80 on right, might be different for one forwards one backwards
     
-  /*if(tempCounter >= 100){
-    turnLeft();
-    tempCounter = 0;
-    turnCounter++;
-  }
-    tempCounter++;
-    /*
-  Serial.print("Counter: ");
-  Serial.print(tempCounter);
-  Serial.println();
-  Serial.print("Turns: ");
-  Serial.print(turnCounter);
-  Serial.println();*/
+ 
   
   
 }
