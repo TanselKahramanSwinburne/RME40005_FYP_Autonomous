@@ -17,12 +17,13 @@
 #include "NewPing.h" //required for ultrasonics
 #include "QMC5883LCompass.h" //required for compass
 
+ int initial = 0;
 int tempCounter = 0;
 int turnCounter = 0;
 
 //Setup Compass Constants and Variables
 const int CompArraySize = 1;
-const int CompSmoothing = 5;
+const int CompSmoothing = 8;
 int AveragingXArray[CompArraySize];
 int AveragingYArray[CompArraySize];
 int AveragingLoop = 0;
@@ -48,11 +49,18 @@ const int ServoStraight = 100;
 #define ECHO_PIN A2 //Analog Input 2
 
 //Movement Specifications
+const int Fast = 255; //Motor PWM Speed Settings
+const int Med = 180;
+const int Slow = 90;
+const int Off = 0;
 const int MaximumDistance = 200;
 const int MinimumDistance = 20;
 const int TurnTime = 10; //Min required 10ms, 300 is roughly 90 degrees - roughly. it changes how far it goes each time.
+const int BumpTime = 50; //Essentially bump time is what turn time does at the minute, should adjust turn time for a set angle?
+const int BrakeTime = 50;
 bool MovingForward = false;
 int Distance = 100;
+
 
 //Class Declarations
 NewPing sonar(TRIG_PIN, ECHO_PIN, MaximumDistance); //Ultrasonic Sensor Class Creation - Note: Can potentially use the same pins for trigger and echo if running short on pins, consult NewPing.h
@@ -119,14 +127,27 @@ void loop() {
   }
 
   */
-  analogWrite(LeftMotorPWM, 0);
-  analogWrite(RightMotorPWM, 80);
   //turn until bearing
-  if(250 - 9 > degreesRead){ //offset of about 7° for turning control
-    turnLeft();
+  int bearing = 250;
+ 
+  if(bearing - 9 > degreesRead){ //offset of about 9° for turning control
+    turnLeft(Slow); //two types of turns required, wheels backwards and not?
+    initial = 0;
   }
-  else
-    moveStop(); //add in braking to movestop?
+  /*else if (bearing > degreesRead){
+    bumpLeft(Med);
+  }*/
+  else if (initial == 0){
+    brake(Med);
+    initial = 1;
+    //delay(BrakeTime);
+  }
+  else {
+    moveStop();
+  }
+  //  Serial.print(initial);
+  //  Serial.println();
+     //add in braking to movestop?
     //include a bump command to bump left 2 or 3 degrees, closest seems to get is about 4° before the target, bump 4 degrees or use one left one right to move the extra 4?
     //PWM Test going straight
     //analogWrite(PIN, DUTY CYCLE) - writes a PWM signal to the specified pin, at a duty cycle of 0-255 for 0-100%
@@ -135,7 +156,7 @@ void loop() {
     
     //Right motor stronger than left by about 10
     //90 is about the lowest speed we can go, 90 on left, 80 on right, might be different for one forwards one backwards
-    //incorporate pwm into the movement code, have settings for high medium and slow
+    
   /*if(tempCounter >= 100){
     turnLeft();
     tempCounter = 0;

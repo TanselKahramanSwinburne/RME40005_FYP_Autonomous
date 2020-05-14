@@ -30,7 +30,7 @@ int readCompass() {
   int x, xAve;
   int y, yAve;
   int dirAngle;
-  long xAveBuff, yAveBuff;
+  //long xAveBuff, yAveBuff;
 
   // Read compass values.
   compass.read();
@@ -40,7 +40,8 @@ int readCompass() {
   y = compass.getY();
 
   // Store XY readings into averaging array.
-  AveragingXArray[AveragingLoop] = x;
+  //removed averaging array due to compass module already doing this process in smoothing
+  /*AveragingXArray[AveragingLoop] = x;
   AveragingYArray[AveragingLoop] = y;
   AveragingLoop++;
   if (AveragingLoop >= CompArraySize) AveragingLoop = 0;
@@ -58,9 +59,10 @@ int readCompass() {
     yAveBuff += AveragingYArray[j];
   }
   yAve = yAveBuff / CompArraySize;
-
+*/
   // Calculate the direction in degrees.
-  dirAngle = atan2(xAve, yAve)/0.0174532925;
+  dirAngle = atan2(x, y)/0.0174532925;
+  //atan2(xAve, yAve)/0.0174532925;
   if (dirAngle < 0) dirAngle+=360;
   if (dirAngle >= 360) dirAngle-=360;
 
