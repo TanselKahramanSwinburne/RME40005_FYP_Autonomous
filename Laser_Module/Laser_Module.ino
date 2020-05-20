@@ -28,18 +28,17 @@ void setup() {
 }
 
 void loop() {
-    if (lidar.waitScanDot() == RESULT_OK) {
+  if (lidar.waitScanDot() == RESULT_OK) {
+    float angle    = lidar.getCurrentScanPoint().angle; //anglue value in degree
+    if ((angle >= 75) && (angle <= 350)) {
       float distance = lidar.getCurrentScanPoint().distance; //distance value in mm unit
-      float angle    = lidar.getCurrentScanPoint().angle; //anglue value in degree
       byte  quality  = lidar.getCurrentScanPoint().quality; //quality of the current measurement
       bool  startBit = lidar.getCurrentScanPoint().startBit;
       Serial.print(angle, DEC);
       Serial.print(",");
       Serial.println(distance, DEC);
-    } else {
-      //Serial.println(" YDLIDAR get Scandata fialed!!");
     }
-
+  }
 }
 
 
