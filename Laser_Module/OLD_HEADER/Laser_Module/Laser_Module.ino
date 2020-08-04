@@ -12,10 +12,11 @@
  *      Yellow = Possible Obstacles / Obstacles in the distance
  *      Red = No Go, full obstacle, avoid.
  */
+ 
 #include "YDLidar.h"
 #include <SoftwareSerial.h>
 
-#define BAUD_RATE 115200
+#define BAUD_RATE 230400
 #define MOTOR 3
 #define SZ_SIZE 7
 #define CLEAR_TIME 5000
@@ -93,7 +94,14 @@ void loop() {
       byte  quality  = lidar.getCurrentScanPoint().quality; //quality of the current measurement
       bool  startBit = lidar.getCurrentScanPoint().startBit;
       savesection(angle, distance);
+
+      Serial.print("Angle: ");
+      Serial.print(angle);
+      Serial.print(" | Distance: ");
+      Serial.println(distance);
     }
+
+     
   }
 
   savezone();
@@ -112,15 +120,16 @@ void loop() {
       sections[i] = -1;
     } 
     saveTime = millis();
-    Serial.println("RESET");
-  } 
-  
+  }
+
+   
+  /*
   for (int i = 0; i < SZ_SIZE; i++) {
     Serial.print("[");
     Serial.print(zones[i]);
     Serial.print("]");
   }
-  Serial.println();
+  Serial.println();*/
 }
 
 
