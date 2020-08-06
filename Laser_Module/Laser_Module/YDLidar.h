@@ -10,7 +10,6 @@
 
 #include "Arduino.h"
 #include "v8stdint.h"
-#include <SoftwareSerial.h>
 
 
 #define LIDAR_CMD_STOP                      0x65
@@ -61,72 +60,72 @@
 
 
 typedef enum {
-	CT_Normal = 0,
-	CT_RingStart  = 1,
-	CT_Tail,
+  CT_Normal = 0,
+  CT_RingStart  = 1,
+  CT_Tail,
 }CT;
 
 struct node_info {
-	uint8_t    sync_quality;
-	uint16_t   angle_q6_checkbit;
-	uint16_t   distance_q2;
+  uint8_t    sync_quality;
+  uint16_t   angle_q6_checkbit;
+  uint16_t   distance_q2;
 } __attribute__((packed)) ;
 
 struct node_package {
-	uint16_t  package_Head;
-	uint8_t   package_CT;
-	uint8_t   nowPackageNum;
-	uint16_t  packageFirstSampleAngle;
-	uint16_t  packageLastSampleAngle;
-	uint16_t  checkSum;
-	uint16_t  packageSampleDistance[PackageSampleMaxLngth];
+  uint16_t  package_Head;
+  uint8_t   package_CT;
+  uint8_t   nowPackageNum;
+  uint16_t  packageFirstSampleAngle;
+  uint16_t  packageLastSampleAngle;
+  uint16_t  checkSum;
+  uint16_t  packageSampleDistance[PackageSampleMaxLngth];
 } __attribute__((packed)) ;
 
 
 struct device_info{
-	uint8_t   model;
-	uint16_t  firmware_version;
-	uint8_t   hardware_version;
-	uint8_t   serialnum[16];
+  uint8_t   model;
+  uint16_t  firmware_version;
+  uint8_t   hardware_version;
+  uint8_t   serialnum[16];
 } __attribute__((packed)) ;
 
 struct device_health {
-	uint8_t   status;
-	uint16_t  error_code;
+  uint8_t   status;
+  uint16_t  error_code;
 } __attribute__((packed))  ;
 
 struct sampling_rate {
-	uint8_t rate;
+  uint8_t rate;
 } __attribute__((packed))  ;
 
 struct scan_frequency {
-	uint32_t frequency;
+  uint32_t frequency;
 } __attribute__((packed))  ;
 
 struct scan_rotation {
-	uint8_t rotation;
+  uint8_t rotation;
 } __attribute__((packed))  ;
 
 struct cmd_packet {
-	uint8_t syncByte;
-	uint8_t cmd_flag;
-	uint8_t size;
-	uint8_t data;
+  uint8_t syncByte;
+  uint8_t cmd_flag;
+  uint8_t size;
+  uint8_t data;
 } __attribute__((packed)) ;
 
 struct lidar_ans_header {
-	uint8_t  syncByte1;
-	uint8_t  syncByte2;
-	uint32_t size:30;
-	uint32_t subType:2;
-	uint8_t  type;
+  uint8_t  syncByte1;
+  uint8_t  syncByte2;
+  uint32_t size:30;
+  uint32_t subType:2;
+  uint8_t  type;
 } __attribute__((packed));
 
 struct scanPoint {
-	uint8_t quality;
-	float 	angle;
-	float 	distance;
-	bool    startBit;
+  uint8_t quality;
+  float   angle;
+  float   distance;
+  bool    startBit;
 };
 
 
@@ -149,7 +148,7 @@ public:
     ~YDLidar();
 
     // open the given serial interface and try to connect to the YDLIDAR
-    bool begin(SoftwareSerial &serialobj, uint32_t baudrate =SERIAL_BAUDRATE);
+    bool begin(HardwareSerial &serialobj, uint32_t baudrate =SERIAL_BAUDRATE);
 
     // close the currently opened serial interface
     void end(void);
@@ -185,6 +184,6 @@ protected:
     result_t waitResponseHeader(lidar_ans_header * header, uint32_t timeout = DEFAULT_TIMEOUT);
 
 protected:
-    SoftwareSerial * _bined_serialdev;  
+    HardwareSerial * _bined_serialdev;  
     scanPoint point;
 };
