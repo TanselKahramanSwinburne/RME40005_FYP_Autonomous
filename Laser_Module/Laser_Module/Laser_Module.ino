@@ -14,9 +14,8 @@
  */
  
 #include "YDLidar.h"
-#include <SoftwareSerial.h>
 
-#define BAUD_RATE 230400
+#define BAUD_RATE 115200
 #define MOTOR 3
 #define SZ_SIZE 7
 #define CLEAR_TIME 5000
@@ -24,7 +23,6 @@
 #define YELLOW_ZONE 2000
 #define RED_ZONE 500
 
-SoftwareSerial mySerial(10, 11);
 YDLidar lidar;
 
 char zones[SZ_SIZE];
@@ -40,15 +38,14 @@ float clearTime;
 void setup() {
   // Setup serial communications for printing and with the YLIDAR.
   Serial.begin(BAUD_RATE);
-  mySerial.begin(BAUD_RATE);
-  lidar.begin(mySerial, BAUD_RATE);
+  lidar.begin(Serial, BAUD_RATE);
 
   // Setup motor control on the YLIDAR.
   pinMode(MOTOR, OUTPUT);
-  analogWrite(MOTOR, 0);
+  analogWrite(MOTOR, 255);
 
   // Define how big a section is as per the section size.
-  sectionIncrement = (350 - 50) / SZ_SIZE;
+  sectionIncrement = (360 - 0) / SZ_SIZE;
 
   // Initialise the sections array.
   for (int i = 0; i < SZ_SIZE; i++) {
@@ -89,7 +86,7 @@ void loop() {
   // Save reading from the YLIDAR.
   if (lidar.waitScanDot() == RESULT_OK) {
     float angle    = lidar.getCurrentScanPoint().angle; //anglue value in degree
-    if ((angle >= 50) && (angle <= 350)) {
+
       float distance = lidar.getCurrentScanPoint().distance; //distance value in mm unit
       byte  quality  = lidar.getCurrentScanPoint().quality; //quality of the current measurement
       bool  startBit = lidar.getCurrentScanPoint().startBit;
@@ -99,7 +96,7 @@ void loop() {
       Serial.print(angle);
       Serial.print(" | Distance: ");
       Serial.println(distance);
-    }
+    
 
      
   }
