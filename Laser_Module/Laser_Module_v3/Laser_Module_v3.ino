@@ -230,16 +230,16 @@ void ReceivePacket() {  //read the length, starting angle, end angle, check code
     }
 //
 //    for (int d = 0; d < samples_sent; d++) {
-////      Serial.print(F("d:"));
-////      Serial.print(d);
-////      Serial.print(F(" | Anglel[d]: "));
-////      Serial.print(Anglel[d]);
-////      Serial.print(F(" | Int(Anglel): "));
-////      Serial.print(int(Anglel[d]));
-////      Serial.print(F(" | Distance: "));
-////      Serial.println(Distance[d]);
-////      Serial.print(F(" | dataArray[Angle]: "));
-////      Serial.print(dataArray[int(Anglel[d])]); 
+//      Serial.print(F("d:"));
+//      Serial.print(d);
+//      Serial.print(F(" | Anglel[d]: "));
+//      Serial.print(Anglel[d]);
+//      Serial.print(F(" | Int(Anglel): "));
+//      Serial.print(int(Anglel[d]));
+//      Serial.print(F(" | Distance: "));
+//      Serial.println(Distance[d]);
+//      Serial.print(F(" | dataArray[Angle]: "));
+//      Serial.print(dataArray[int(Anglel[d])]); 
 //    }
     
   } else {
@@ -271,7 +271,7 @@ void PrintZones() {
 void loop() {  
   CheckMessage();
   PrintZones();
-  //Serial.println(dataArray[50]); 
+//  Serial.println(dataArray[50]); 
 //  for (int i = 270; i < 360; i++) {
 //    if ((i > 270) && (i < 360) && (dataArray[i] > 1000)) {
 //      digitalWrite(8, HIGH);
