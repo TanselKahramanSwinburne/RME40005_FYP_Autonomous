@@ -181,7 +181,6 @@ void ReceivePacket() {  //read the length, starting angle, end angle, check code
 
 void loop() {  
   CheckMessage();
-  PrintZones();
 
 }  
   
