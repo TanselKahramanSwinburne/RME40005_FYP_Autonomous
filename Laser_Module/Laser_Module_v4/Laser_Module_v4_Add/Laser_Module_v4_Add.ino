@@ -1,12 +1,12 @@
 #include <math.h>
 
 #define BAUD_RATE 115200
-#define ZONES 3
-#define SECTIONS 10
-#define START_ANGLE 50
-#define END_ANGLE 250
+#define ZONES 3.00
+#define SECTIONS 10.00
+#define START_ANGLE 50.00
+#define END_ANGLE 250.00
 
-float Data_Array[ZONES][SECTIONS];
+float Data_Array[int(ZONES)][int(SECTIONS)];
 float Zone_Spacing;
 float Section_Spacing;
 String zRange1, zRange2, sRange1, sRange2;
@@ -21,12 +21,12 @@ void setup() {
   // Printing Zone Specifications
   Serial.print("Zones: " + String(ZONES));
 
-  Zone_Spacing = (START_ANGLE + END_ANGLE) / ZONES;
+  Zone_Spacing = (END_ANGLE - START_ANGLE) / ZONES;
   Serial.print(" | Zone Spacing: " + String(Zone_Spacing) + " | ");
 
   for (int i = 0; i < ZONES; i++) {
-    zRange1 = String(i * Zone_Spacing);
-    zRange2 = String(((i + 1) * Zone_Spacing) - 1);
+    zRange1 = String((i * Zone_Spacing) + START_ANGLE);
+    zRange2 = String((((i + 1) * Zone_Spacing) - 1) + START_ANGLE);
     if (i < (ZONES - 1)) {
       zRange2 += ", ";
     }
@@ -44,8 +44,8 @@ void setup() {
   for (int i = 0; i < ZONES; i++) {
     Serial.print("Zone " + String(i) + " Sections: ");
     for (int j = 0; j < SECTIONS; j++) {
-      sRange1 = String((j * Section_Spacing)+ (i * Zone_Spacing));
-      sRange2 = String((((j + 1) * Section_Spacing) - 1) + (i * Zone_Spacing));
+      sRange1 = String(((j * Section_Spacing)+ (i * Zone_Spacing)) + START_ANGLE);
+      sRange2 = String(((((j + 1) * Section_Spacing) - 1) + (i * Zone_Spacing)) + START_ANGLE);
       if (i < (SECTIONS - 1)) {
       sRange2 += ", ";
       }
@@ -53,6 +53,7 @@ void setup() {
     }
     Serial.println();
   }
+
 
   for (int i = 0; i < ZONES; i++) {
     for (int j = 0; j < SECTIONS; j++) {
