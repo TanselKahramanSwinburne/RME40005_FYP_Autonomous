@@ -54,6 +54,7 @@ void setup() {
 }
 
 void CheckMessage() {
+  Serial.println("Check Msg Start");
   // Poll for our expected 3 bytes that reflect the packet header.  
   if (Serial1.available()) {   // If anything comes in Serial (USB),  
     incomingByte = Serial1.read();  
@@ -61,30 +62,33 @@ void CheckMessage() {
     if (!first_byte_received) {  //check if first byte 
       if (incomingByte==170) {
         first_byte_received=true;  //170 DEC = AA Hex
-        
+        Serial.println("Check Msg FirstByte Good");
       }
       
     } else if (!second_byte_received) {  //check if second byte
       if (incomingByte==85) {  //85 Dec = 55 Hex
         second_byte_received=true;  
-       
+       Serial.println("Check Msg SecondByte Good");
       } else {  
-        first_byte_received=false;  
+        first_byte_received=false; 
+        Serial.println("Check Msg 1"); 
       }  
       
     } else { //it's a byte of something, record it, 1 is a start data packet, 0 is a normal packet
       if ((incomingByte==0) && first_byte_received && second_byte_received) {  
         first_byte_received=false;  //we're past the first and second byte so reset the checks in case we get an overwritten message or something
         second_byte_received=false;  
-       
+       Serial.println("Check Msg ReceivePacket");
         ReceivePacketStart();  //read the header data and any available sample data
         
       } else {  //cancel operation
         first_byte_received=false;  
         second_byte_received=false;  
+        Serial.println("Check Msg Cancel");
       }  
     }  
-  }  
+  }
+  Serial.println("Check Msg End");  
 }
 
 void ReceivePacketStart(){//read the length, starting angle, end angle, check sum and all available data at this stage
@@ -136,7 +140,7 @@ void ReceivePacketStart(){//read the length, starting angle, end angle, check su
 
     }
     else{
-      Serial.println("fifth");
+      Serial.println("fifth: MsgLoc: " + String(MsgLoc));
       IncomingMessage[MsgLoc] = incomingData;
       MsgReading = 1;
       MsgWait = 1;
@@ -156,7 +160,7 @@ void CheckData(){ //reads in new data into the partially filled sample_bytes arr
 
     }
     else{
-      Serial.println("Sixth");
+      Serial.println("Sixth: " + inboundData);
       IncomingMessage[MsgLoc] = inboundData;
       MsgReading = 1;
       MsgWait = 1;
