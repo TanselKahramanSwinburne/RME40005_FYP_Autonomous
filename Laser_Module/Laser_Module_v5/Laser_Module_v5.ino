@@ -1,4 +1,3 @@
-//#include <math.h>
 #include <HardwareSerial.h>
 
 #define BAUD_RATE 115200
@@ -7,18 +6,14 @@
 #define INITIAL_BYTE 170
 #define SECONDARY_BYTE 85
 #define RUN_MESSAGE 0
-#define ARRAY_SIZE 100 //10 bytes of header + 80 bytes of data (2 bytes per sample) + 10 spare bytes to avoid errors*/
+#define ARRAY_SIZE 100 //10 bytes of header + 80 bytes of data (2 bytes per sample) + 10 spare bytes to avoid errors*/  
 
-int incomingByte;   
+int AngleData[360];
 
-float saveTime = 0;
-float printTime; 
-
-float AngleData[360];
 typedef enum { FIRST_BYTE, SECOND_BYTE, TYPE, SAMPLE_NUM, GET_DATA, NONE } states;
 
 states state = NONE;
-  
+
 void setup() {  
   Serial.begin(BAUD_RATE);
   Serial1.begin(BAUD_RATE);  
@@ -32,10 +27,10 @@ void setup() {
   pinMode(10, OUTPUT);
   pinMode(11, OUTPUT);
 
+  //Initialise AngleData array with -1
   for(int f = 0; f<360; f++){
     AngleData[f] = -1;
   }
-  
 }  
 
 void CheckMessage(const byte inByte){
@@ -120,6 +115,7 @@ void CheckMessage(const byte inByte){
    
   }
 }
+
 void ProcessData(byte sample_bytes[], int samples_sent){
   float Anglel[50];
   float Distance[50];
@@ -157,8 +153,15 @@ void ProcessData(byte sample_bytes[], int samples_sent){
       //Serial.println("Distance: " + String(Distance[k]));
     }
   
-    float AngleFSA = float((((starting_angle_MSB << 8) + starting_angle_LSB) >> 1)) / 64;
+    float AngleFSA = float((((starting_angle_MSB << 8) + starting_angle_LSB) >> 1)) / 64;    
     float AngleLSA = float((((end_angle_MSB << 8) + end_angle_LSB) >> 1)) / 64;
+
+    //End angle is over the 360° threshold and requires correction to determine correct number of intermediate angles
+    if(AngleLSA < AngleFSA){
+      AngleLSA += 360.0;
+    }
+    
+    
     float angleDiff = AngleLSA - AngleFSA;
     int ss_1 = samples_sent - 1;
     float frac = angleDiff / float(ss_1);
@@ -170,6 +173,7 @@ void ProcessData(byte sample_bytes[], int samples_sent){
       //calculate intermediate angle for current sample
       frac_a = frac * a;
       IntAngle[a] = frac_a + AngleFSA;
+      
       //Serial.println("Int Angle " + String(a) + ": " + String(IntAngle[a]));
     
       //calculate correction angle for the current sample
@@ -191,12 +195,15 @@ void ProcessData(byte sample_bytes[], int samples_sent){
       }
 
       //calucalte total corrected angle and assign distance for current sample
+      
       Anglel[a] = IntAngle[a] + AngCorrectk[a];
-      if(Distance[a] > 0.0){
-        AngleData[round(Anglel[a])] = Distance[a];
+      if(Anglel[a] >= 360.0){
+        Anglel[a] -= 360;
       }
-    }
-   
+      if(round(Distance[a]) > 0){
+        AngleData[round(Anglel[a])] = round(Distance[a]);
+      }
+    }   
 }
 
 void ReceivedPacket(byte DataArray[], int sample_size) {  //read the length, starting angle, end angle, check code and then all the data
