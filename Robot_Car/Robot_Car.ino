@@ -4,9 +4,9 @@
 // Last Modified: 03/05/2020
 // Description:
 /* Main setup and control code for robot car.
- * Sets up controller pin designation, global variables, ultrasonic sensor, compass module and servo motor
+ * Sets up controller pin designation, global variables, ultrasonic sensor, compass module, Laser Module and servo motor
  * contains high level control code for the robot
- * Note: Other .ino files, Movement, Servo_Control adn Ultrasonic are all merged into this file at compile time, they are added in alphabetical order.
+ * Note: Other .ino files, Movement, Servo_Control and Ultrasonic are all merged into this file at compile time, they are added in alphabetical order.
  *       Be careful with order of declared functions to ensure that the using function is declared in a file that is merged after the function it is using.
  * Note: Pins 10 and 9 do not seem to work as PWM pins on this arduino UNO
  */
@@ -17,12 +17,46 @@
  
 #include <Servo.h> //required for servo
 #include<math.h> //required for compass
+#include <HardwareSerial.h> //required for laser sensor - Serial buffer has been extended in this library to 256 bytes instead of original 64 as overflows were occurring
 #include "NewPing.h" //required for ultrasonics
 #include "QMC5883LCompass.h" //required for compass
 
- int initial = 0;
+//Laser Comms Defines
+#define BAUD_RATE 115200 //laser baud rate
+#define MOTOR 12
+#define PRINT_TIME 500
+#define INITIAL_BYTE 170
+#define SECONDARY_BYTE 85
+#define RUN_MESSAGE 0
+#define ARRAY_SIZE 100 //10 bytes of header + 80 bytes of data (2 bytes per sample) + 10 spare bytes to avoid errors*/  
+
+//Data Configuration Defines
+#define ZONES 3
+#define SECTIONS 10
+#define START_ANGLE 0
+#define END_ANGLE 270
+#define MID_ANGLE 135//need to calibrate
+
+//Laser Comms Variables
+int AngleData[360];
+
+typedef enum { FIRST_BYTE, SECOND_BYTE, TYPE, SAMPLE_NUM, GET_DATA, NONE } states;
+states state = NONE;
+
+//Data Configuration Variables
+int Data_Array[ZONES][SECTIONS];
+int Zone_Spacing;
+int Section_Spacing;
+String zRange1, zRange2, sRange1, sRange2;
+
+//testing turning code
+int initial = 0;
 int tempCounter = 0;
 int turnCounter = 0;
+
+//Printing time count values
+float SavedTime = 0;
+float CurrentTime = 0;
 
 //Setup Compass Constants and Variables
 const int CompArraySize = 1;
@@ -72,7 +106,11 @@ QMC5883LCompass compass; //Compass class declaration
 
 void setup() {
   //Compass Setup
-  Serial.begin(9600);
+  Serial.begin(BAUD_RATE);
+  Serial1.begin(BAUD_RATE);  
+  
+  SetupLaserComms();
+  SetupDataConfig();
   setupCompass();
   
   //Motor Control Setup
@@ -88,6 +126,21 @@ void setup() {
   servo_motor.write(ServoStraight); //Initialise servo to point straight ahead
 }
 
+
+
+void PrintStuff(){
+  for (int i = 0; i < ZONES; i++) {
+    for (int j = 0; j < SECTIONS; j++) {
+      
+      Serial.print("["+String(Data_Array[i][j]) + "]");
+    }
+    Serial.println();
+  }
+  Serial.println("---------------------------------------------------------------------------------------------");
+}
+
+
+
 void loop() {
 
   int distanceRight = 0; 
@@ -96,31 +149,48 @@ void loop() {
   int degreesRead = 0; //Compass current degree value
 
   
+  //Read Messages from Lidar
+  while(Serial1.available() > 0){
+    CheckMessage(Serial1.read());
+  }
+  UpdateDataArray();
 
+  //Print data array
+  if(SavedTime == 0){
+    SavedTime = millis();
+  }
+  CurrentTime = millis() - SavedTime;
+
+  if(CurrentTime > 5000 && CurrentTime < 5500){
+    PrintStuff();
+    SavedTime = millis();
+  }
+ 
+  
   //Read Compass Value
-  degreesRead = readCompass();
-  Serial.print("Deg: ");
-  Serial.print(degreesRead);
-  Serial.println();
+  //degreesRead = readCompass();
+  //Serial.print("Deg: ");
+  //Serial.print(degreesRead);
+  //Serial.println();
 
   //turn until bearing
   int bearing = 250;
  
-  if(bearing - 9 > degreesRead){ //offset of about 9° for turning control
+  /*if(bearing - 9 > degreesRead){ //offset of about 9° for turning control
     turnLeft(Slow); //two types of turns required, wheels backwards and not?
     initial = 0;
   }
-  /*else if (bearing > degreesRead){
-    bumpLeft(Med);
-  }*/
+  //else if (bearing > degreesRead){
+    //bumpLeft(Med);
+  //}
   else if (initial == 0){
-    brake(Med);
+    //brake(Med);
     initial = 1;
     //delay(BrakeTime);
   }
   else {
     moveStop();
-  }
+  }*/
   
     
     //PWM Test going straight
