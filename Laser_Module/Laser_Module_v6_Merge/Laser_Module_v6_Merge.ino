@@ -2,7 +2,7 @@
 
 //Laser Comms Defines
 #define BAUD_RATE 115200
-#define MOTOR 3
+#define MOTOR 12
 #define PRINT_TIME 500
 #define INITIAL_BYTE 170
 #define SECONDARY_BYTE 85
@@ -12,8 +12,8 @@
 //Data Configuration Defines
 #define ZONES 3
 #define SECTIONS 10
-#define START_ANGLE 50
-#define END_ANGLE 250
+#define START_ANGLE 0
+#define END_ANGLE 270
 
 //Laser Comms Variables
 int AngleData[360];
