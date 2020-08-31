@@ -380,14 +380,14 @@ float currentTime = 0;
 
 
 void loop() {  
-
+  static int x = 0;
   
   while(Serial1.available() > 0){
     CheckMessage(Serial1.read());
   }
   UpdateDataArray();
 
-  if(savedTime == 0){
+  /*if(savedTime == 0){
     savedTime = millis();
   }
   currentTime = millis() - savedTime;
@@ -397,7 +397,13 @@ void loop() {
   }
   if(currentTime > 5500){
     savedTime = millis();
-  }
+  }*/
+   Serial.println("Angle 110: " + String(AngleData[110]));
+ /* x++;
+  if(x>= 360){
+    x = 0;
+  }*/
+
   
 
 }  

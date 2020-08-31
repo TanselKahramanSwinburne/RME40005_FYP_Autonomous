@@ -37,6 +37,16 @@
 #define END_ANGLE 270
 #define MID_ANGLE 135//need to calibrate
 
+//Path Selection Variables
+int StepSequence;
+int leftGapIndex = -1;
+int rightGapIndex = -1;
+int travelAngle;
+int Heading = -1;
+const int GapDist = 275;
+const int MinDist = 250;
+
+
 //Laser Comms Variables
 int AngleData[360];
 
@@ -80,8 +90,9 @@ const int ServoPin = 10;
 const int ServoLeft = 190;
 const int ServoRight = 0; 
 const int ServoStraight = 100;
+bool AtBearing = false;
 
-//Sensor Pins
+//Ultrasonic Sensor Pins
 #define TRIG_PIN A1 //Analog Input 1
 #define ECHO_PIN A2 //Analog Input 2
 
@@ -112,6 +123,9 @@ void setup() {
   SetupLaserComms();
   SetupDataConfig();
   setupCompass();
+
+  //path selection setup
+  StepSequence = 0;
   
   //Motor Control Setup
   pinMode(RightMotorForward, OUTPUT);
@@ -136,9 +150,10 @@ void PrintStuff(){
     }
     Serial.println();
   }
+  
   Serial.println("---------------------------------------------------------------------------------------------");
+ Serial.println(String(StepSequence));
 }
-
 
 
 void loop() {
@@ -147,7 +162,7 @@ void loop() {
   int distanceLeft = 0;
 
   int degreesRead = 0; //Compass current degree value
-
+  
   
   //Read Messages from Lidar
   while(Serial1.available() > 0){
@@ -161,22 +176,27 @@ void loop() {
   }
   CurrentTime = millis() - SavedTime;
 
-  if(CurrentTime > 5000 && CurrentTime < 5500){
+  if(CurrentTime > 2000 && CurrentTime < 2500){
     PrintStuff();
     SavedTime = millis();
   }
- 
+  if(millis() > 5000){
+    PathSelection();  
+  }
   
-  //Read Compass Value
-  //degreesRead = readCompass();
-  //Serial.print("Deg: ");
-  //Serial.print(degreesRead);
-  //Serial.println();
+  
+  
+  
+//  Read Compass Value
+//  degreesRead = readCompass();
+//  Serial.print("Deg: ");
+//  Serial.print(degreesRead);
+//  Serial.println();
 
   //turn until bearing
-  int bearing = 250;
- 
-  /*if(bearing - 9 > degreesRead){ //offset of about 9° for turning control
+
+ /*
+  if(bearing - 9 > degreesRead){ //offset of about 9° for turning control
     turnLeft(Slow); //two types of turns required, wheels backwards and not?
     initial = 0;
   }
@@ -190,9 +210,9 @@ void loop() {
   }
   else {
     moveStop();
-  }*/
+  }
   
-    
+   */ 
     //PWM Test going straight
     //Right motor stronger than left by about 10
     //90 is about the lowest speed we can go, 90 on left, 80 on right, might be different for one forwards one backwards

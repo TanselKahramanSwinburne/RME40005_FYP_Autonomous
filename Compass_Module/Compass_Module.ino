@@ -32,7 +32,7 @@ void setupCompass() {
    *                     Turning this feature on will results in even more smoothing but will take longer to process.
    *                     
    */
-  compass.setSmoothing(10,true);  
+  compass.setSmoothing(3,true);  
 }
 
 
@@ -49,7 +49,7 @@ int readCompass() {
   // Return XY readings.
   x = compass.getX();
   y = compass.getY();
-
+/*
   // Store XY readings into averaging array.
   AveragingXArray[AveragingLoop] = x;
   AveragingYArray[AveragingLoop] = y;
@@ -69,9 +69,9 @@ int readCompass() {
     yAveBuff += AveragingYArray[j];
   }
   yAve = yAveBuff / ArraySize;
-
+*/
   // Calculate the direction in degrees.
-  dirAngle = atan2(xAve, yAve)/0.0174532925;
+  dirAngle = atan2(x, y)/0.0174532925;
   if (dirAngle < 0) dirAngle+=360;
   if (dirAngle >= 360) dirAngle-=360;
 
