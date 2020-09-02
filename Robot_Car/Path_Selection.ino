@@ -30,7 +30,6 @@ void step0_Reset() {
 
 void step1_Running() {
   moveForward(Slow);
-  
   // Look for WORST CASE scenario in front zone.
     //tuned values for 
     if (Data_Array[1][0] <= 175 || Data_Array[1][1] <= 225 || Data_Array[1][8] <= 225 || Data_Array[1][9] <= 175){ 
@@ -125,44 +124,45 @@ void step3_CalculateToGap() {
     travelAngle = rightTravelAngle;
   }
 
-//    Serial.println("frontAngle: " + String(frontAngle));
-//    
-//    Serial.print("leftTargetAngleLocal: " + String(leftTargetAngleLocal));
-//    Serial.println(" | leftTravelAngle: " + String(leftTravelAngle));
-//    
-//    Serial.print("rightTargetAngleLocal: " + String(rightTargetAngleLocal));
-//    Serial.println(" | rightTravelAngle: " + String(rightTravelAngle));
-//
-//    Serial.println("travelAngle: " + String(travelAngle));
+    Serial.println("frontAngle: " + String(frontAngle));
+    
+    Serial.print("leftTargetAngleLocal: " + String(leftTargetAngleLocal));
+    Serial.println(" | leftTravelAngle: " + String(leftTravelAngle));
+    
+    Serial.print("rightTargetAngleLocal: " + String(rightTargetAngleLocal));
+    Serial.println(" | rightTravelAngle: " + String(rightTravelAngle));
+
+    Serial.println("travelAngle: " + String(travelAngle));
 
     // [ROBOT ROTATE UNTIL COMPASS GOES TO THIS BEARING]
    // StepSequence = 4;
     Serial.println("Step 3: Calculate to Gap -> Step 4: Rotate to Gap");
-
+    
   
-  Heading = readCompass() + travelAngle;
+  Heading = Bearing + travelAngle;
   if(Heading >= 360){
         Heading -= 360;
       }
   if(Heading < 0){
     Heading += 360;
   }
+  Serial.println("Current Bearing: " + String(Bearing) + " , next Heading: " + String(Heading));
   StepSequence = 4;
 }
 
 
 void step4_RotateToGap() {
   // [ROBOT ROTATE UNTIL COMPASS BEARING CHANGES EQUIVALENT TO travelAngle]
-  int bearing = -1;
-  bearing = readCompass();
-  Serial.println("Bearing: " + String(bearing));
+  
+  
+  Serial.println("Bearing: " + String(Bearing));
   Serial.println("Heading: " + String(Heading));
-  if(Heading != bearing && Heading != -1){
-    if(Heading > bearing + 10){
+  if(Heading != Bearing && Heading != -1){
+    if(Heading > Bearing + 10){
       turnLeft(Med);
-    } else if(Heading < bearing - 10){
+    } else if(Heading < Bearing - 10){
       turnRight(Med);
-    } else if(Heading < bearing + 10 && Heading > bearing - 10){
+    } else if(Heading < Bearing + 10 && Heading > Bearing - 10){
       StepSequence = 1;
       Serial.println("Step 4: Rotate to Gap -> Step 1: Running");
     }

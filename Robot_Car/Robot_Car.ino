@@ -70,10 +70,11 @@ float CurrentTime = 0;
 
 //Setup Compass Constants and Variables
 const int CompArraySize = 1;
-const int CompSmoothing = 8;
+const int CompSmoothing = 5;
 int AveragingXArray[CompArraySize];
 int AveragingYArray[CompArraySize];
 int AveragingLoop = 0;
+int Bearing = -1;
 
 //Setup Motor Control Pins
 const int LeftMotorForward = 5;
@@ -152,7 +153,7 @@ void PrintStuff(){
   }
   
   Serial.println("---------------------------------------------------------------------------------------------");
- Serial.println(String(StepSequence));
+  Serial.println(String(StepSequence));
 }
 
 
@@ -180,12 +181,15 @@ void loop() {
     PrintStuff();
     SavedTime = millis();
   }
+  if(CurrentTime > 2500){
+    SavedTime = millis();
+  }
   if(millis() > 5000){
     PathSelection();  
   }
   
   
-  
+  Bearing = readCompass();
   
 //  Read Compass Value
 //  degreesRead = readCompass();

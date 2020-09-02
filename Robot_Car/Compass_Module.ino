@@ -62,6 +62,7 @@ int readCompass() {
 */
   // Calculate the direction in degrees.
   dirAngle = atan2(x, y)/0.0174532925;
+  dirAngle = 360 - dirAngle + 180; //added to adjust compass (southern hemisphere?)
   //atan2(xAve, yAve)/0.0174532925;
   if (dirAngle < 0) dirAngle+=360;
   if (dirAngle >= 360) dirAngle-=360;

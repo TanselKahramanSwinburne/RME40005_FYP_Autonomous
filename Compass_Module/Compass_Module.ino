@@ -49,6 +49,9 @@ int readCompass() {
   // Return XY readings.
   x = compass.getX();
   y = compass.getY();
+ // Serial.println("X: " + String(x));
+ // Serial.println("Y: " + String(y));
+  
 /*
   // Store XY readings into averaging array.
   AveragingXArray[AveragingLoop] = x;
@@ -72,6 +75,7 @@ int readCompass() {
 */
   // Calculate the direction in degrees.
   dirAngle = atan2(x, y)/0.0174532925;
+  dirAngle = 360 - dirAngle + 180; //added to adjust sensor (for southern hemisphere?)
   if (dirAngle < 0) dirAngle+=360;
   if (dirAngle >= 360) dirAngle-=360;
 
