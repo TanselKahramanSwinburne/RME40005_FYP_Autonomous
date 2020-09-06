@@ -82,8 +82,8 @@ void brakeRight(int pace){
 }
 
 void moveForward(int pace) {
-  analogWrite(LeftMotorPWM, pace);
-  analogWrite(RightMotorPWM, pace);
+  analogWrite(LeftMotorPWM, pace + 10);
+  analogWrite(RightMotorPWM, pace - 10);
 
   digitalWrite(LeftMotorForward, HIGH);
   digitalWrite(RightMotorForward, HIGH);

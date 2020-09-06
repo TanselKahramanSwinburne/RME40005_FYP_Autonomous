@@ -19,7 +19,6 @@
 #include<math.h> //required for compass
 #include <HardwareSerial.h> //required for laser sensor - Serial buffer has been extended in this library to 256 bytes instead of original 64 as overflows were occurring
 #include "NewPing.h" //required for ultrasonics
-#include "QMC5883LCompass.h" //required for compass
 
 //Laser Comms Defines
 #define BAUD_RATE 115200 //laser baud rate
@@ -68,14 +67,6 @@ int turnCounter = 0;
 float SavedTime = 0;
 float CurrentTime = 0;
 
-//Setup Compass Constants and Variables
-const int CompArraySize = 1;
-const int CompSmoothing = 5;
-int AveragingXArray[CompArraySize];
-int AveragingYArray[CompArraySize];
-int AveragingLoop = 0;
-int Bearing = -1;
-
 //Setup Motor Control Pins
 const int LeftMotorForward = 5;
 const int LeftMotorBackward = 4;
@@ -91,7 +82,6 @@ const int ServoPin = 10;//nonexistent
 const int ServoLeft = 190;
 const int ServoRight = 0; 
 const int ServoStraight = 100;
-bool AtBearing = false;
 
 //Ultrasonic Sensor Pins //nonexistent
 #define TRIG_PIN A1 //Analog Input 1
@@ -114,7 +104,6 @@ int Distance = 100;
 //Class Declarations
 NewPing sonar(TRIG_PIN, ECHO_PIN, MaximumDistance); //Ultrasonic Sensor Class Creation - Note: Can potentially use the same pins for trigger and echo if running short on pins, consult NewPing.h
 Servo servo_motor; //Servo Class
-QMC5883LCompass compass; //Compass class declaration
 
 void setup() {
   //Compass Setup
@@ -123,7 +112,6 @@ void setup() {
   
   SetupLaserComms();
   SetupDataConfig();
-  setupCompass();
 
   //path selection setup
   StepSequence = 0;
@@ -139,6 +127,9 @@ void setup() {
   //Servo Setup
   servo_motor.attach(ServoPin);
   servo_motor.write(ServoStraight); //Initialise servo to point straight ahead
+
+  pinMode(13, OUTPUT);
+  digitalWrite(13, LOW);
 }
 
 
@@ -163,8 +154,8 @@ void loop() {
   int distanceLeft = 0;
 
   int degreesRead = 0; //Compass current degree value
-  
-  
+
+
   //Read Messages from Lidar
   while(Serial1.available() > 0){
     CheckMessage(Serial1.read());
@@ -178,7 +169,7 @@ void loop() {
   CurrentTime = millis() - SavedTime;
 
   if(CurrentTime > 2000 && CurrentTime < 2500){
-    PrintStuff();
+    //PrintStuff();
     SavedTime = millis();
   }
   if(CurrentTime > 2500){
@@ -189,34 +180,6 @@ void loop() {
   }
   
   
-  Bearing = readCompass();
-  
-//  Read Compass Value
-//  degreesRead = readCompass();
-//  Serial.print("Deg: ");
-//  Serial.print(degreesRead);
-//  Serial.println();
-
-  //turn until bearing
-
- /*
-  if(bearing - 9 > degreesRead){ //offset of about 9° for turning control
-    turnLeft(Slow); //two types of turns required, wheels backwards and not?
-    initial = 0;
-  }
-  //else if (bearing > degreesRead){
-    //bumpLeft(Med);
-  //}
-  else if (initial == 0){
-    //brake(Med);
-    initial = 1;
-    //delay(BrakeTime);
-  }
-  else {
-    moveStop();
-  }
-  
-   */ 
     //PWM Test going straight
     //Right motor stronger than left by about 10
     //90 is about the lowest speed we can go, 90 on left, 80 on right, might be different for one forwards one backwards

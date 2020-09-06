@@ -22,19 +22,19 @@ void PathSelection(){
       step5_RotateToFindGap();
       break;
    case 6:
-      step6_Divert1();
+      step6_Divert_Forward1();
       break;
    case 7:
-      step7_Divert2();
+      step7_Divert_Rotate1();
       break;
    case 8:
-      step8_Divert3();
+      step8_Divert_Forward2();
       break;
    case 9:
-      step9_Divert4();
+      step9_Divert_Rotate2();
       break;
    case 10:
-      step10_Divert5();
+      step10_Divert_Forward3();
       break;
    case 11:
       step11_ReturnToPath();
@@ -50,10 +50,11 @@ void step0_Reset() {
   
   StepSequence = 1;
   Serial.println("Step 0: Reset -> Step 1: Running");
+  
 }
 
 void step1_Running() {
-  moveForward(Slow);
+  //moveForward(Slow);
   // Look for WORST CASE scenario in front zone.
   //tuned values for 
   step2_ClearCheck("1");
@@ -63,11 +64,13 @@ void step2_ClearCheck(String callingStep) {
   if (Data_Array[1][0] <= 175 || Data_Array[1][1] <= 225 || Data_Array[1][8] <= 225 || Data_Array[1][9] <= 175){ 
     StepSequence = 2;
     Serial.println("Step " + callingStep + " -> Step 2: Find Gap");
+    
   }
   else{
     for(int i = 2; i < 8; i++){
        if(Data_Array[1][i] <= MinDist){ //250
         StepSequence = 2;
+        
         Serial.println("Step " + callingStep + " -> Step 2: Find Gap");
         break;
        }
@@ -80,7 +83,7 @@ void step2_FindGap() {
   leftGapIndex = -1;
   rightGapIndex = -1;
   
-  moveStop();
+  //moveStop();
 
   // Look for a three section 300mm gap in the left and right zones.
   for (int i = 0; i < (SECTIONS - 4); i++) {
@@ -104,6 +107,7 @@ void step2_FindGap() {
   if ((leftGapIndex >= 0) || (rightGapIndex >= 0)) { 
     StepSequence = 3;
     Serial.println("Step 2: Find Gap -> Step 3: Calculate to Gap");
+    
   } else { // If a gap wasn't found on both sides, rotate until you find one.
     StepSequence = 5;
     Serial.println("Step 2: Find Gap -> Step 5: Rotate to Find Gap");
@@ -149,21 +153,23 @@ void step3_CalculateToGap() {
 
   if (abs(leftTravelAngle) < abs(rightTravelAngle)) {
     travelAngle = leftTravelAngle;
+    Serial.println("Turn left for gap");
   } else {
     travelAngle = rightTravelAngle;
+    Serial.println("Turn right for gap");
   }
-
-    Serial.println("frontAngle: " + String(frontAngle));
-    
-    Serial.print("leftTargetAngleLocal: " + String(leftTargetAngleLocal));
-    Serial.println(" | leftTravelAngle: " + String(leftTravelAngle));
-    
-    Serial.print("rightTargetAngleLocal: " + String(rightTargetAngleLocal));
-    Serial.println(" | rightTravelAngle: " + String(rightTravelAngle));
-
-    Serial.println("travelAngle: " + String(travelAngle));
-
-    Serial.println("Step 3: Calculate to Gap -> Step 4: Rotate to Gap");
+//
+//    Serial.println("frontAngle: " + String(frontAngle));
+//    
+//    Serial.print("leftTargetAngleLocal: " + String(leftTargetAngleLocal));
+//    Serial.println(" | leftTravelAngle: " + String(leftTravelAngle));
+//    
+//    Serial.print("rightTargetAngleLocal: " + String(rightTargetAngleLocal));
+//    Serial.println(" | rightTravelAngle: " + String(rightTravelAngle));
+//
+//    Serial.println("travelAngle: " + String(travelAngle));
+//
+//    Serial.println("Step 3: Calculate to Gap -> Step 4: Rotate to Gap");
     StepSequence = 4;
 }
 
@@ -183,8 +189,9 @@ void step4_RotateToGap() {
 
   // Rotate until the gap is in front of us.
   if (((Data_Array[1][3] >= GapDist) &&  (Data_Array[1][4] >= GapDist) && (Data_Array[1][5] >= GapDist) && (Data_Array[1][6] >= GapDist) && (Data_Array[1][7] >= GapDist))) {
-    Serial.println("Step 4: Rotate To Gap -> Step 6: Divert 1");
+    Serial.println("Step 4: Rotate To Gap -> Step 6: Divert Forward 1");
     StepSequence = 6;
+    
   }
 }
 
@@ -195,7 +202,7 @@ void step5_RotateToFindGap() {
 
 
 
-void step6_Divert1() {
+void step6_Divert_Forward1() {
   // [ROBOT GOES MOVES FORWARD].
   if (turnTime1 == -1.0) {
     turnTime1 = millis() - startTime;
@@ -203,7 +210,7 @@ void step6_Divert1() {
   }
   
   // Check for any obstacles on divert path.
-  step2_ClearCheck("6");
+  //step2_ClearCheck("6");
   
   bool clearWay = true;
   if (travelAngle < 0) {
@@ -214,10 +221,12 @@ void step6_Divert1() {
       }
     }
   } else if (travelAngle > 0) {
+    Serial.println("Checking if past object");
     // When we divert to the right side, check if obstacle on left side is past robot.
     for (int i = SECTIONS - 1; i >= SECTIONS / 2; i--) {
-      if (Data_Array[0][i] <= GapDist) {
+      if (Data_Array[0][i] <= GapDist) { // POSSIBLY ADD BUFFER ON GAP DIST CHECK
         clearWay = false;
+        Serial.println("Not Past Object: " + String(GapDist) + " Section: " + String(i));
       }
     }
   } else {
@@ -225,12 +234,13 @@ void step6_Divert1() {
   }
 
   if (clearWay) {
-    Serial.println("Step 6: Divert 1 -> Step 7: Divert 2");
+    Serial.println("Step 6: Divert Forward 1 -> Step 7: Divert Rotate 1");
     StepSequence = 7;
+    
   }
 }
 
-void step7_Divert2() {
+void step7_Divert_Rotate1() {
   if (startTime == -1.0) {
     startTime = millis();
   }
@@ -250,7 +260,7 @@ void step7_Divert2() {
   } else if (travelAngle > 0) {
     // If we diverted right, rotate left until the object is within view again.
     // [ROBOT ROTATE LEFT]
-    for (int i = SECTIONS - 1; i >= (SECTIONS / 2); i--) {
+    for (int i = (SECTIONS / 2) + (SECTIONS / 4); i >= (SECTIONS / 2); i--) {
       if (Data_Array[0][i]  > GapDist) {
         rotateBack = false;
       }
@@ -260,19 +270,20 @@ void step7_Divert2() {
   }
 
   if (rotateBack) {
-    Serial.println("Step 7: Divert 2 -> Step 8: Divert 3");
+    Serial.println("Step 7: Divert Rotate 1 -> Step 8: Divert Forward 2");
     StepSequence = 8;
+    
   }
 }
 
-void step8_Divert3() {
+void step8_Divert_Forward2() {
     // [ROBOT GOES MOVES FORWARD].
     if (turnTime2 == -1.0) {
       turnTime2 = millis() - startTime;
       startTime = -1.0;
     }
   // Check for any obstacles on divert path.
-  step2_ClearCheck("8");
+  //step2_ClearCheck("8");
   
   bool clearWay = true;
   if (travelAngle < 0) {
@@ -284,7 +295,7 @@ void step8_Divert3() {
     }
   } else if (travelAngle > 0) {
     // When we divert to the right side, check if obstacle on left side is past robot.
-    for (int i = SECTIONS - 1; i >= (SECTIONS / 2); i--) {
+    for (int i = SECTIONS - 1; i >= (SECTIONS / 3); i--) {
       if (Data_Array[0][i] <= GapDist) {
         clearWay = false;
       }
@@ -294,12 +305,13 @@ void step8_Divert3() {
   }
 
   if (clearWay) {
-    Serial.println("Step 8: Divert 3 -> Step 9: Divert 4");
+    Serial.println("Step 8: Divert Forward 2 -> Step 9: Divert Rotate 2");
     StepSequence = 9;
+    
   }
 }
 
-void step9_Divert4() {
+void step9_Divert_Rotate2() {
   //[ROTATE ROBAT BACK ACCORDING TO LASER READINGS]
   if (startTime == -1.0) {
     startTime = millis();
@@ -317,7 +329,7 @@ void step9_Divert4() {
   } else if (travelAngle > 0) {
     // If we diverted right, rotate left until the object is within view again.
     // [ROBOT ROTATE LEFT]
-    for (int i = SECTIONS - 1; i >= (SECTIONS / 2); i--) {
+    for (int i = (SECTIONS / 2) + (SECTIONS / 4); i >= (SECTIONS / 2); i--) {
       if (Data_Array[0][i]  > GapDist) {
         rotateBack = false;
       }
@@ -327,12 +339,13 @@ void step9_Divert4() {
   }
 
   if (rotateBack) {
-    Serial.println("Step 9: Divert 4 -> Step 10: Divert 5");
+    Serial.println("Step 9: Divert Rotate 2 -> Step 10: Divert Forward 3");
     StepSequence = 10;
+    
   }
 }
 
-void step10_Divert5() {
+void step10_Divert_Forward3() {
   // [ROBOT GOES MOVES FORWARD].
   if (turnTime3 == -1.0) {
     turnTime3 = millis() - startTime;
@@ -344,7 +357,7 @@ void step10_Divert5() {
   }
   
   // Check for any obstacles on divert path.
-  step2_ClearCheck("10");
+  //step2_ClearCheck("10");
   
   bool clearWay = true;
   if (travelAngle < 0) {
@@ -366,22 +379,23 @@ void step10_Divert5() {
   }
 
   if (clearWay) {
-    Serial.println("Step 10: Divert 5 -> Step 11: Return to Path");
+    Serial.println("Step 10: Divert Forward 3 -> Step 11: Return to Path");
     StepSequence = 11;
+    
   }
 }
 
 void step11_ReturnToPath() {
   float currentTime = 0;
   //[ROTATE ROBAT BACK ACCORDING TO LASER READINGS]
-  if (startTime == -1.0) {
+  /*if (startTime == -1.0) {
     startTime = millis();
   }
 
   currentTime = millis() - startTime;
   
-  bool rotateBack = false;
-  
+  bool rotateBack = false;*/
+ /* 
   if (travelAngle < 0) {  
   // If we diverted left, rotate to the left until right side is clear of the object.
   // [ROBOT ROTATE LEFT]
@@ -407,9 +421,11 @@ void step11_ReturnToPath() {
   }
   
   if (rotateBack) {
-    startTime = -1.0;
+    startTime = -1.0;*/
+    delay(2000);
     Serial.println("Step 11: Return to Path -> Step 1: Running");
     StepSequence = 1;
-  }
+    
+  //}
   
 }
