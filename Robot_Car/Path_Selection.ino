@@ -56,13 +56,13 @@ void step1_Running() {
 void step2_ClearCheck(String callingStep) {
   if (Data_Array[1][0] <= 175 || Data_Array[1][1] <= 225 || Data_Array[1][8] <= 225 || Data_Array[1][9] <= 175){ 
     StepSequence = 2;
-    Serial.println("Step " + callingStep + ": Divert 1 -> Step 2: Find Gap");
+    Serial.println("Step " + callingStep + " -> Step 2: Find Gap");
   }
   else{
     for(int i = 2; i < 8; i++){
        if(Data_Array[1][i] <= MinDist){ //250
         StepSequence = 2;
-        Serial.println("Step " + callingStep + ": Divert 1 -> Step 2: Find Gap");
+        Serial.println("Step " + callingStep + " -> Step 2: Find Gap");
         break;
        }
     }
