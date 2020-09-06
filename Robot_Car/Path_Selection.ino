@@ -1,7 +1,9 @@
 float turnTime1 = -1.0;
 float turnTime2 = -1.0;
 float turnTime3 = -1.0;
+float totalTurnTime = -1.0;
 float startTime = -1.0;
+
 void PathSelection(){
   switch (StepSequence) {
     case 1:
@@ -180,7 +182,7 @@ void step4_RotateToGap() {
   } 
 
   // Rotate until the gap is in front of us.
-  if (((Data_Array[1][3] >= GapDist) &&  (Data_Array[1][4] >= GapDist) && (Data_Array[1][5] >= GapDist) && (Data_Array[1][6] >= GapDist) && (Data_Array[1][7] >= GapDist)) {
+  if (((Data_Array[1][3] >= GapDist) &&  (Data_Array[1][4] >= GapDist) && (Data_Array[1][5] >= GapDist) && (Data_Array[1][6] >= GapDist) && (Data_Array[1][7] >= GapDist))) {
     Serial.println("Step 4: Rotate To Gap -> Step 6: Divert 1");
     StepSequence = 6;
   }
@@ -195,8 +197,8 @@ void step5_RotateToFindGap() {
 
 void step6_Divert1() {
   // [ROBOT GOES MOVES FORWARD].
-  if (turnTime == -1.0) {
-    turnTime = millis() - startTime;
+  if (turnTime1 == -1.0) {
+    turnTime1 = millis() - startTime;
     startTime = -1.0;
   }
   

@@ -23,7 +23,7 @@
 
 //Laser Comms Defines
 #define BAUD_RATE 115200 //laser baud rate
-#define MOTOR 12
+#define MOTOR 12 //Laser motor pwm pin
 #define PRINT_TIME 500
 #define INITIAL_BYTE 170
 #define SECONDARY_BYTE 85
@@ -85,7 +85,7 @@ const int LeftMotorPWM = 11;
 const int RightMotorPWM = 6;
 
 //Servo Motor Pin
-const int ServoPin = 10;
+const int ServoPin = 10;//nonexistent
 
 //Servo Movement Calibrations
 const int ServoLeft = 190;
@@ -93,7 +93,7 @@ const int ServoRight = 0;
 const int ServoStraight = 100;
 bool AtBearing = false;
 
-//Ultrasonic Sensor Pins
+//Ultrasonic Sensor Pins //nonexistent
 #define TRIG_PIN A1 //Analog Input 1
 #define ECHO_PIN A2 //Analog Input 2
 
