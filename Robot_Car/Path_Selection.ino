@@ -215,7 +215,7 @@ void step6_Divert_Forward1() {
   bool clearWay = true;
   if (travelAngle < 0) {
     // When we divert to left side, check if obstacle on right side is past robot.
-    for (int i = 0; i < SECTIONS / 2; i++) {
+    for (int i = 0; i =< SECTIONS / 2; i++) {
       if (Data_Array[2][i] <= GapDist) {
         clearWay = false;
       }
@@ -252,7 +252,7 @@ void step7_Divert_Rotate1() {
   if (travelAngle < 0) {  
   // If we diverted left, rotate to the right until the object is within view again.
   // [ROBOT ROTATE RIGHT]
-    for (int i = SECTIONS / 2; i < SECTIONS; i++) {
+    for (int i = (SECTIONS / 2) - (SECTIONS / 4); i <= (SECTIONS / 2); i++) {
       if (Data_Array[2][i]  > GapDist) {
         rotateBack = false;
       }
@@ -288,7 +288,7 @@ void step8_Divert_Forward2() {
   bool clearWay = true;
   if (travelAngle < 0) {
     // When we divert to left side, check if obstacle on right side is past robot.
-    for (int i = 0; i < (SECTIONS / 2); i++) {
+    for (int i = 0; i < (2 * (SECTIONS / 3)); i++) {
       if (Data_Array[2][i] <= GapDist) {
         clearWay = false;
       }
@@ -321,7 +321,7 @@ void step9_Divert_Rotate2() {
   if (travelAngle < 0) {  
   // If we diverted left, rotate to the right until the object is within view again.
   // [ROBOT ROTATE RIGHT]
-    for (int i = SECTIONS / 2; i < SECTIONS; i++) {
+    for (int i = (SECTIONS / 2) - (SECTIONS / 4); i <= (SECTIONS / 2); i++) {
       if (Data_Array[2][i]  > GapDist) {
         rotateBack = false;
       }
@@ -362,7 +362,7 @@ void step10_Divert_Forward3() {
   bool clearWay = true;
   if (travelAngle < 0) {
     // When we divert to left side, check if obstacle on right side is past robot.
-    for (int i = SECTIONS / 2; i < SECTIONS; i++) {
+    for (int i = 0; i <= SECTIONS / 2; i++) {
       if (Data_Array[2][i] <= GapDist) {
         clearWay = false;
       }
