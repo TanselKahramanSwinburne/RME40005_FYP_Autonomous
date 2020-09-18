@@ -130,22 +130,22 @@ void step3_CalculateToGap() {
   frontAngle = (frontAngleRange1 + frontAngleRange2) / 2;
   
   // If there was a gap on the left, find the angle it is at.
-  if (leftGapIndex != -1) {
+  if (leftGapIndex != -1) {//7
     // Target angle will be the middle of the section where the gap is.
-    leftLocalRange1 = ((leftGapIndex * Section_Spacing) + START_ANGLE);
-    leftLocalRange2 = (((leftGapIndex + 1) * Section_Spacing) - 1 + START_ANGLE);
-    leftTargetAngleLocal = (leftLocalRange1 + leftLocalRange2) / 2;
+    leftLocalRange1 = (((leftGapIndex +1) * Section_Spacing) + START_ANGLE);//63
+    leftLocalRange2 = (((leftGapIndex + 2) * Section_Spacing) - 1 + START_ANGLE);//71
+    leftTargetAngleLocal = (leftLocalRange1 + leftLocalRange2) / 2;//134/2 = 67
 
     // We must now get the angle between the front of our robot to the target angle so we can tell it how much to rotate by.
     leftTravelAngle = leftTargetAngleLocal - frontAngle;    
   }
 
   // If there was a gap on the right, find the angle it is at.
-  if (rightGapIndex != -1) {
+  if (rightGapIndex != -1) {//2
     // Target angle will be the middle of the section where the gap is.
-    rightLocalRange1 = ((2 * Zone_Spacing) + (rightGapIndex * Section_Spacing) + START_ANGLE);
-    rightLocalRange2 = ((2 * Zone_Spacing) + ((rightGapIndex + 1) * Section_Spacing) - 1 + START_ANGLE);
-    rightTargetAngleLocal = (rightLocalRange1 + rightLocalRange2) / 2;
+    rightLocalRange1 = ((2 * Zone_Spacing) + ((rightGapIndex)* Section_Spacing) + START_ANGLE); //198
+    rightLocalRange2 = ((2 * Zone_Spacing) + ((rightGapIndex + 1) * Section_Spacing) - 1 + START_ANGLE); //206
+    rightTargetAngleLocal = (rightLocalRange1 + rightLocalRange2) / 2;//202
 
     // We must now get the angle between the front of our robot to the target angle so we can tell it how much to rotate by.
     rightTravelAngle = rightTargetAngleLocal - frontAngle;    
@@ -158,7 +158,7 @@ void step3_CalculateToGap() {
     travelAngle = rightTravelAngle;
     Serial.println("Turn right for gap");
   }
-//
+
 //    Serial.println("frontAngle: " + String(frontAngle));
 //    
 //    Serial.print("leftTargetAngleLocal: " + String(leftTargetAngleLocal));
@@ -168,8 +168,11 @@ void step3_CalculateToGap() {
 //    Serial.println(" | rightTravelAngle: " + String(rightTravelAngle));
 //
 //    Serial.println("travelAngle: " + String(travelAngle));
-//
-//    Serial.println("Step 3: Calculate to Gap -> Step 4: Rotate to Gap");
+//    Serial.println("GapIndex: " + String(leftGapIndex));
+//    Serial.println("RightGapIndex: " + String(rightGapIndex));
+//    
+    Serial.println("Step 3: Calculate to Gap -> Step 4: Rotate to Gap");
+    //PrintStuff();
     StepSequence = 4;
 }
 
@@ -215,18 +218,18 @@ void step6_Divert_Forward1() {
   bool clearWay = true;
   if (travelAngle < 0) {
     // When we divert to left side, check if obstacle on right side is past robot.
-    for (int i = 0; i < SECTIONS / 2; i++) {
-      if (Data_Array[2][i] <= GapDist) {
+    for (int i = SECTIONS / 2; i < SECTIONS; i++) {
+      if (Data_Array[2][i] >= GapDist + DistBuffer) {
         clearWay = false;
       }
     }
   } else if (travelAngle > 0) {
-    Serial.println("Checking if past object");
+    //Serial.println("Checking if past object");
     // When we divert to the right side, check if obstacle on left side is past robot.
-    for (int i = SECTIONS - 1; i >= SECTIONS / 2; i--) {
-      if (Data_Array[0][i] <= GapDist) { // POSSIBLY ADD BUFFER ON GAP DIST CHECK
+    for (int i = SECTIONS / 2; i >= 0; i--) {
+      if (Data_Array[0][i] >= GapDist + DistBuffer) { // POSSIBLY ADD BUFFER ON GAP DIST CHECK
         clearWay = false;
-        Serial.println("Not Past Object: " + String(GapDist) + " Section: " + String(i));
+        //Serial.println("Not Past Object: " + String(GapDist) + " Section: " + String(i));
       }
     }
   } else {
@@ -252,16 +255,16 @@ void step7_Divert_Rotate1() {
   if (travelAngle < 0) {  
   // If we diverted left, rotate to the right until the object is within view again.
   // [ROBOT ROTATE RIGHT]
-    for (int i = SECTIONS / 2; i < SECTIONS; i++) {
-      if (Data_Array[2][i]  > GapDist) {
+    for (int i = 5 * (SECTIONS / 6); i < (SECTIONS); i++) {
+      if (Data_Array[2][i] < GapDist) {
         rotateBack = false;
       }
     }
   } else if (travelAngle > 0) {
     // If we diverted right, rotate left until the object is within view again.
     // [ROBOT ROTATE LEFT]
-    for (int i = (SECTIONS / 2) + (SECTIONS / 4); i >= (SECTIONS / 2); i--) {
-      if (Data_Array[0][i]  > GapDist) {
+    for (int i = (SECTIONS / 6); i >= 0; i--) {
+      if (Data_Array[0][i]  < GapDist) {
         rotateBack = false;
       }
     }
@@ -288,7 +291,7 @@ void step8_Divert_Forward2() {
   bool clearWay = true;
   if (travelAngle < 0) {
     // When we divert to left side, check if obstacle on right side is past robot.
-    for (int i = 0; i < (SECTIONS / 2); i++) {
+    for (int i = 0; i <= (2 * (SECTIONS / 3)); i++) {
       if (Data_Array[2][i] <= GapDist) {
         clearWay = false;
       }
@@ -321,7 +324,7 @@ void step9_Divert_Rotate2() {
   if (travelAngle < 0) {  
   // If we diverted left, rotate to the right until the object is within view again.
   // [ROBOT ROTATE RIGHT]
-    for (int i = SECTIONS / 2; i < SECTIONS; i++) {
+    for (int i = (SECTIONS / 2) - (SECTIONS / 4); i <= (SECTIONS / 2); i++) {
       if (Data_Array[2][i]  > GapDist) {
         rotateBack = false;
       }
@@ -363,14 +366,14 @@ void step10_Divert_Forward3() {
   if (travelAngle < 0) {
     // When we divert to left side, check if obstacle on right side is past robot.
     for (int i = SECTIONS / 2; i < SECTIONS; i++) {
-      if (Data_Array[2][i] <= GapDist) {
+      if (Data_Array[2][i] >= GapDist + DistBuffer) {
         clearWay = false;
       }
     }
   } else if (travelAngle > 0) {
     // When we divert to the right side, check if obstacle on left side is past robot.
-    for (int i = SECTIONS - 1; i >= SECTIONS / 2; i--) {
-      if (Data_Array[0][i] <= GapDist) {
+    for (int i = SECTIONS / 2; i >= 0; i--) {
+      if (Data_Array[0][i] >= GapDist + DistBuffer) {
         clearWay = false;
       }
     }

@@ -254,7 +254,7 @@ void ProcessData(byte sample_bytes[], int samples_sent){
         AngleData[round(Anglel[a])] = round(Distance[a]);
       }
       else{ //object is too close to read or cannot be read - error
-        AngleData[round(Anglel[a])] = -2;
+        AngleData[round(Anglel[a])] = 10000;
       }
     }   
 }

@@ -45,6 +45,7 @@ int Heading = -1;
 const int GapDist = 275;
 const int MinDist = 250;
 
+//bool initialMov = 0;//temp
 
 //Laser Comms Variables
 int AngleData[360];
@@ -90,7 +91,7 @@ const int ServoStraight = 100;
 //Movement Specifications
 const int Fast = 255; //Motor PWM Speed Settings
 const int Med = 180;
-const int Slow = 90;
+const int Slow = 110;
 const int Off = 0;
 const int MaximumDistance = 200;
 const int MinimumDistance = 20;
@@ -99,6 +100,9 @@ const int BumpTime = 50; //Essentially bump time is what turn time does at the m
 const int BrakeTime = 50;
 bool MovingForward = false;
 int Distance = 100;
+
+//Path Planning Global Variables
+const int DistBuffer = 50;
 
 
 //Class Declarations
@@ -154,7 +158,8 @@ void loop() {
   int distanceLeft = 0;
 
   int degreesRead = 0; //Compass current degree value
-
+  //left motor 90
+  //right motor 90+20
 
   //Read Messages from Lidar
   while(Serial1.available() > 0){

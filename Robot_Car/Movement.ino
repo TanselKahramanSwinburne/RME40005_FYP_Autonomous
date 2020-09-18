@@ -10,6 +10,8 @@
    move forwards and backwards, bump left and right.
 */
 
+
+
 void moveStop() { //add in braking?
   analogWrite(LeftMotorPWM, Off);
   analogWrite(RightMotorPWM, Off);
@@ -19,6 +21,7 @@ void moveStop() { //add in braking?
 
   digitalWrite(RightMotorForward, LOW);
   digitalWrite(RightMotorBackward, LOW);
+//  initialMov = 0;
 }
 
 void brakeForward(int pace){
@@ -82,14 +85,38 @@ void brakeRight(int pace){
 }
 
 void moveForward(int pace) {
-  analogWrite(LeftMotorPWM, pace + 10);
-  analogWrite(RightMotorPWM, pace - 10);
+  static bool initialMov = 0;
+  if(!initialMov){
+  analogWrite(LeftMotorPWM, Off);
+  analogWrite(RightMotorPWM, Off);
 
+  digitalWrite(LeftMotorForward, LOW);
+  digitalWrite(LeftMotorBackward, LOW);
+
+  digitalWrite(RightMotorForward, LOW);
+  digitalWrite(RightMotorBackward, LOW);
+  delay(500);
+  Serial.println("motors on but no pwm");
   digitalWrite(LeftMotorForward, HIGH);
   digitalWrite(RightMotorForward, HIGH);
 
   digitalWrite(LeftMotorBackward, LOW);
   digitalWrite(RightMotorBackward, LOW);
+  delay(2000);
+  analogWrite(LeftMotorPWM, 30);
+  analogWrite(RightMotorPWM, 30);  
+  delay(2000);
+  initialMov = 1;
+  }
+  Serial.println("PWM on");
+  analogWrite(LeftMotorPWM, pace+10);
+  analogWrite(RightMotorPWM, pace + 30);
+  digitalWrite(LeftMotorForward, HIGH);
+  digitalWrite(RightMotorForward, HIGH);
+
+  digitalWrite(LeftMotorBackward, LOW);
+  digitalWrite(RightMotorBackward, LOW);
+  
 }
 
 void moveBackward(int pace) {
