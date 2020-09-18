@@ -87,13 +87,13 @@ void step2_FindGap() {
 
   // Look for a three section 300mm gap in the left and right zones.
   for (int i = 0; i < (SECTIONS - 4); i++) {
-    if (((Data_Array[2][i] >= GapDist) &&  (Data_Array[2][i + 1] >= GapDist) && (Data_Array[2][i + 2] >= GapDist) && (Data_Array[2][i + 3] >= GapDist) && (Data_Array[2][i + 4] >= GapDist)) && (rightGapIndex == -1)) {
+    if (((Data_Array[2][i] >= BuffGapDist) &&  (Data_Array[2][i + 1] >= BuffGapDist) && (Data_Array[2][i + 2] >= BuffGapDist) && (Data_Array[2][i + 3] >= BuffGapDist) && (Data_Array[2][i + 4] >= BuffGapDist)) && (rightGapIndex == -1)) {
       rightGapIndex = i + 2;
     }
-
-    if (((Data_Array[0][SECTIONS - 1 - i] >= GapDist) &&  (Data_Array[0][SECTIONS - 1 - i - 1] >= GapDist) && (Data_Array[0][SECTIONS - 1 - i - 2 ] >= GapDist) &&  (Data_Array[0][SECTIONS - 1 - i - 3] >= GapDist) && (Data_Array[2][SECTIONS - 1 - i - 4] >= GapDist)) && (leftGapIndex == -1)) {
+    
+    if (((Data_Array[0][SECTIONS - 1 - i] >= BuffGapDist) &&  (Data_Array[0][SECTIONS - 1 - i - 1] >= BuffGapDist) && (Data_Array[0][SECTIONS - 1 - i - 2 ] >= BuffGapDist) &&  (Data_Array[0][SECTIONS - 1 - i - 3] >= BuffGapDist) && (Data_Array[0][SECTIONS - 1 - i - 4] >= BuffGapDist)) && (leftGapIndex == -1)) {
       leftGapIndex = SECTIONS - 1 - i - 2;
-      //Serial.println("Index " + String(leftGapIndex)); 
+      Serial.println("Index " + String(leftGapIndex)); 
     }
   }
 
@@ -110,6 +110,7 @@ void step2_FindGap() {
     
   } else { // If a gap wasn't found on both sides, rotate until you find one.
     StepSequence = 5;
+    PrintStuff();
     Serial.println("Step 2: Find Gap -> Step 5: Rotate to Find Gap");
   }
 
@@ -218,16 +219,16 @@ void step6_Divert_Forward1() {
   bool clearWay = true;
   if (travelAngle < 0) {
     // When we divert to left side, check if obstacle on right side is past robot.
-    for (int i = 0; i =< SECTIONS / 2; i++) {
-      if (Data_Array[2][i] <= GapDist) {
+    for (int i = SECTIONS / 2; i < SECTIONS; i++) {
+      if (Data_Array[2][i] >= DivGapDist) {
         clearWay = false;
       }
     }
   } else if (travelAngle > 0) {
     //Serial.println("Checking if past object");
     // When we divert to the right side, check if obstacle on left side is past robot.
-    for (int i = SECTIONS / 2; i >= 0; i--) {
-      if (Data_Array[0][i] >= GapDist + DistBuffer) { // POSSIBLY ADD BUFFER ON GAP DIST CHECK
+    for (int i = (SECTIONS / 2); i >= SECTIONS / 6.0f; i--) {
+      if (Data_Array[0][i] >= DivGapDist + 50) { // POSSIBLY ADD BUFFER ON GAP DIST CHECK
         clearWay = false;
         //Serial.println("Not Past Object: " + String(GapDist) + " Section: " + String(i));
       }
@@ -255,15 +256,17 @@ void step7_Divert_Rotate1() {
   if (travelAngle < 0) {  
   // If we diverted left, rotate to the right until the object is within view again.
   // [ROBOT ROTATE RIGHT]
-    for (int i = SECTIONS / 2; i < SECTIONS; i++) {
-      if (Data_Array[2][i]  > GapDist) {
+  //PrintStuff();
+    for (int i = 5.0f * (SECTIONS / 6.0f); i < SECTIONS; i++) {
+      Serial.println("Section " + String(i) + ": " + String(Data_Array[2][i]) + " , Gapdist: " + String(GapDist));  
+      if (Data_Array[2][i]  < GapDist) {
         rotateBack = false;
       }
     }
   } else if (travelAngle > 0) {
     // If we diverted right, rotate left until the object is within view again.
     // [ROBOT ROTATE LEFT]
-    for (int i = (SECTIONS / 6); i >= 0; i--) {
+    for (int i = (SECTIONS / 3.0f); i >= 0; i--) {
       if (Data_Array[0][i]  < GapDist) {
         rotateBack = false;
       }
@@ -298,7 +301,7 @@ void step8_Divert_Forward2() {
     }
   } else if (travelAngle > 0) {
     // When we divert to the right side, check if obstacle on left side is past robot.
-    for (int i = SECTIONS - 1; i >= (SECTIONS / 3); i--) {
+    for (int i = SECTIONS - 1; i >= (SECTIONS / 3.0f); i--) {
       if (Data_Array[0][i] <= GapDist) {
         clearWay = false;
       }
@@ -324,7 +327,7 @@ void step9_Divert_Rotate2() {
   if (travelAngle < 0) {  
   // If we diverted left, rotate to the right until the object is within view again.
   // [ROBOT ROTATE RIGHT]
-    for (int i = (SECTIONS / 2) - (SECTIONS / 4); i <= (SECTIONS / 2); i++) {
+    for (int i = (SECTIONS / 2) - (SECTIONS / 4.0f); i <= (SECTIONS / 2); i++) {
       if (Data_Array[2][i]  > GapDist) {
         rotateBack = false;
       }
@@ -332,7 +335,7 @@ void step9_Divert_Rotate2() {
   } else if (travelAngle > 0) {
     // If we diverted right, rotate left until the object is within view again.
     // [ROBOT ROTATE LEFT]
-    for (int i = (SECTIONS / 2) + (SECTIONS / 4); i >= (SECTIONS / 2); i--) {
+    for (int i = (SECTIONS / 2) + (SECTIONS / 4.0f); i >= (SECTIONS / 2); i--) {
       if (Data_Array[0][i]  > GapDist) {
         rotateBack = false;
       }
@@ -373,7 +376,7 @@ void step10_Divert_Forward3() {
   } else if (travelAngle > 0) {
     // When we divert to the right side, check if obstacle on left side is past robot.
     for (int i = SECTIONS / 2; i >= 0; i--) {
-      if (Data_Array[0][i] >= GapDist + DistBuffer) {
+      if (Data_Array[0][i] <= GapDist) {
         clearWay = false;
       }
     }

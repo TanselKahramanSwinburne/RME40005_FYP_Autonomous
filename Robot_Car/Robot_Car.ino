@@ -44,6 +44,8 @@ int travelAngle;
 int Heading = -1;
 const int GapDist = 275;
 const int MinDist = 250;
+const int BuffGapDist = 400;
+const int DivGapDist = 200; //used to check if passed first corner of object
 
 //bool initialMov = 0;//temp
 
