@@ -116,7 +116,7 @@ void step2_FindGap() {
 
 }
 
-
+int divertGapBias = 0;
 void step3_CalculateToGap() {
   int frontAngle, frontAngleRange1, frontAngleRange2;
   int leftLocalRange1, leftLocalRange2, leftTargetAngleLocal; 
@@ -152,10 +152,25 @@ void step3_CalculateToGap() {
     rightTravelAngle = rightTargetAngleLocal - frontAngle;    
   }
 
-  if (abs(leftTravelAngle) < abs(rightTravelAngle)) {
+  // Gap Biasing Code!
+  int leftTravelAngleBuffer = leftTravelAngle;
+  int rightTravelAngleBuffer = rightTravelAngle;
+
+  // According to the bias, modify the relevant gap direction.
+  if (divertGapBias > 0) {
+    leftTravelAngleBuffer += divertGapBias;
+  }
+  if (divertGapBias < 0) {
+    rightTravelAngleBuffer += divertGapBias;
+  }
+  
+  // Check the modified gap directions and edit the bias as needed.
+  if (abs(leftTravelAngleBuffer) < abs(rightTravelAngleBuffer)) {
     travelAngle = leftTravelAngle;
+    divertGapBias += 10;
     Serial.println("Turn left for gap");
   } else {
+    divertGapBias -= 10;
     travelAngle = rightTravelAngle;
     Serial.println("Turn right for gap");
   }
