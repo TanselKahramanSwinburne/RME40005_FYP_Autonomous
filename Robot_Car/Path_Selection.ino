@@ -98,7 +98,7 @@ void step2_FindGap() {
   }
 
   /*for(int i = SECTIONS - 1; i >= 2; i--){
-    if (((Data_Array[0][i] >= 500) &&  (Data_Array[0][i - 1] >= 500) && (Data_Array[0][i - 2] >= 500)) && (leftGapIndex == -1)) {
+    if (((Data_Array[0][i] >= 500) &&  (Data_Arramy[0][i - 1] >= 500) && (Data_Array[0][i - 2] >= 500)) && (leftGapIndex == -1)) {
       leftGapIndex = i - 1;
       Serial.println("Index " + String(leftGapIndex)); 
     }
@@ -167,10 +167,10 @@ void step3_CalculateToGap() {
   // Check the modified gap directions and edit the bias as needed.
   if (abs(leftTravelAngleBuffer) < abs(rightTravelAngleBuffer)) {
     travelAngle = leftTravelAngle;
-    divertGapBias += 10;
+    divertGapBias -= 10;
     Serial.println("Turn left for gap");
   } else {
-    divertGapBias -= 10;
+    divertGapBias += 10;
     travelAngle = rightTravelAngle;
     Serial.println("Turn right for gap");
   }
