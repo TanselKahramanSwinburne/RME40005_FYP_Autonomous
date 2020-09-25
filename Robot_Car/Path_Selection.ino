@@ -167,6 +167,11 @@ void step3_CalculateToGap() {
   // Check the modified gap directions and edit the bias as needed.
   if (abs(leftTravelAngleBuffer) < abs(rightTravelAngleBuffer)) {
     travelAngle = leftTravelAngle;
+    int vertDist = Data_Array[1][5];
+    static int HorizBias = 0;
+    HorizBias += vertDist * tan(leftTravelAngle*PI/180) - 270;
+    Serial.println("HorizBias: " + String(HorizBias));
+    Serial.println("VertDist: " + String(vertDist));
     divertGapBias -= 10;
     Serial.println("Turn left for gap");
   } else {
