@@ -116,14 +116,22 @@ void step2_FindGap() {
 
 }
 
-int divertGapBias = 0;
+
 void step3_CalculateToGap() {
+  // Gap finding variables.
   int frontAngle, frontAngleRange1, frontAngleRange2;
   int leftLocalRange1, leftLocalRange2, leftTargetAngleLocal; 
   int leftTravelAngle = 999;
   int rightLocalRange1, rightLocalRange2, rightTargetAngleLocal;
   int rightTravelAngle = 999;
 
+  // Gap biasing variables.
+  bool gapDirection; // False: left, True: right.
+  int leftTravelAngleBuffer;
+  int rightTravelAngleBuffer;
+  int vertDist = 0;
+  int biasModifier = 0;
+  
   
   // We first need to determine what the angle is in front of the robot.
   frontAngleRange1 = Zone_Spacing + ((SECTIONS / 2) * Section_Spacing) + START_ANGLE;
@@ -152,33 +160,65 @@ void step3_CalculateToGap() {
     rightTravelAngle = rightTargetAngleLocal - frontAngle;    
   }
 
-  // Gap Biasing Code!
-  int leftTravelAngleBuffer = leftTravelAngle;
-  int rightTravelAngleBuffer = rightTravelAngle;
-
+  // We need to modify the travel angle values for decision making,
+  // without compromising their actual values, so save them first.
+  leftTravelAngleBuffer = leftTravelAngle;
+  rightTravelAngleBuffer = rightTravelAngle;
+  
   // According to the bias, modify the relevant gap direction.
-  if (divertGapBias > 0) {
-    leftTravelAngleBuffer += divertGapBias;
+  if (DivertGapBias > 0) {
+    leftTravelAngleBuffer += DivertGapBias;
   }
-  if (divertGapBias < 0) {
-    rightTravelAngleBuffer += divertGapBias;
+  if (DivertGapBias < 0) {
+    rightTravelAngleBuffer += DivertGapBias;
   }
   
   // Check the modified gap directions and edit the bias as needed.
   if (abs(leftTravelAngleBuffer) < abs(rightTravelAngleBuffer)) {
+    // If we are turning left, assign the travel angle correctly and modify the turning bias.
     travelAngle = leftTravelAngle;
-    int vertDist = Data_Array[1][5];
-    static int HorizBias = 0;
-    HorizBias += vertDist * tan(leftTravelAngle*PI/180) - 270;
-    Serial.println("HorizBias: " + String(HorizBias));
-    Serial.println("VertDist: " + String(vertDist));
-    divertGapBias -= 10;
+    DivertGapBias -= 10;
+
+    // Determine the horizontal distance we will travel to go to this gap.
+    vertDist = Data_Array[1][5];
+    HorizBias += vertDist * tan(leftTravelAngle*PI/180) + 270;
+
+    // Indicate gap is on the left side.
+    gapDirection = false;
     Serial.println("Turn left for gap");
   } else {
-    divertGapBias += 10;
+    DivertGapBias += 10;
     travelAngle = rightTravelAngle;
+
+    // Determine the horizontal distance we will travel to go to this gap.
+    vertDist = Data_Array[1][5];
+    HorizBias += vertDist * tan(rightTravelAngle*PI/180) - 270;
+
+    // Indicate gap is on the right side.
+    gapDirection = true;
     Serial.println("Turn right for gap");
   }
+
+  // Set the bias modifier according to the horizontal distance we travel.
+  if ((abs(HorizBias) >= 200) && (abs(HorizBias) < 400)) {
+    biasModifier = 10;
+  } else if ((abs(HorizBias) >= 400) && (abs(HorizBias) < 600)) {
+    biasModifier = 20;
+  } else if ((abs(HorizBias) >= 600) && (abs(HorizBias) < 800)) {
+    biasModifier = 30;
+  } else if ((abs(HorizBias) >= 800) && (abs(HorizBias) < 1000)) {
+    biasModifier = 40;
+  } else if ((abs(HorizBias) >= 1000)) {
+    biasModifier = 50;
+  }
+
+  // If we turned to the left, change the bias modifier accordingly.
+  if (!gapDirection) {
+    biasModifier *= -1;
+  }
+
+  // Modify the gap bias according to the horizontal bias.
+  DivertGapBias += biasModifier;
 
 //    Serial.println("frontAngle: " + String(frontAngle));
 //    

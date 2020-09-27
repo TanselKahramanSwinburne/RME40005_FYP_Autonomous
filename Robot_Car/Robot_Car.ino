@@ -105,6 +105,8 @@ int Distance = 100;
 
 //Path Planning Global Variables
 const int DistBuffer = 50;
+int DivertGapBias = 0;
+int HorizBias = 0;
 
 
 //Class Declarations
